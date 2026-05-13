@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chronicles — A Living Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #1c1510;
+    --ink-light: #3d2e22;
+    --parchment: #f5ead8;
+    --parchment-dark: #e8d5b7;
+    --parchment-deep: #d4b896;
+    --gold:      #b8852a;
+    --gold-light:#d4a854;
+    --red-wax:   #8b2e2e;
+    --shadow:    rgba(28,21,16,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #2a1f14;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, #3d2a18 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, #1a1008 0%, transparent 55%);
+    min-height: 100vh;
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 80px;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ── HEADER ── */
+  .masthead {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .masthead-rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .masthead-rule span {
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .masthead-rule span:last-child {
+    background: linear-gradient(to left, transparent, var(--gold));
+  }
+
+  .rune {
+    color: var(--gold);
+    font-size: 18px;
+    opacity: 0.8;
+  }
+
+  .story-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(22px, 5vw, 44px);
+    color: var(--gold-light);
+    letter-spacing: 0.04em;
+    text-shadow: 0 2px 20px rgba(184,133,42,0.35);
+    line-height: 1.2;
+  }
+
+  .story-subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--parchment-deep);
+    margin-top: 8px;
+    opacity: 0.75;
+  }
+
+  /* ── BOOK ── */
+  .book {
+    width: 100%;
+    max-width: 780px;
+    background: var(--parchment);
+    border-radius: 2px 6px 6px 2px;
+    box-shadow:
+      -6px 0 0 #b89a72,
+      -10px 0 0 #a07e56,
+      -14px 2px 8px rgba(0,0,0,0.5),
+      4px 4px 24px rgba(0,0,0,0.5),
+      inset 0 0 60px rgba(180,140,80,0.08);
+    position: relative;
+    animation: fadeUp 0.9s 0.2s ease both;
+  }
+
+  /* Spine texture */
+  .book::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 28px;
+    background: linear-gradient(to right, #8a6840, #c4996a 40%, #b08050 60%, #7a5c30);
+    border-radius: 2px 0 0 2px;
+  }
+
+  .book-inner {
+    padding: 48px 52px 52px 68px;
+    position: relative;
+  }
+
+  /* Page edge lines */
+  .book-inner::before {
+    content: '';
+    position: absolute;
+    left: 54px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(184,133,42,0.2) 15%, rgba(184,133,42,0.15) 85%, transparent);
+  }
+
+  /* ── CHAPTER HEADER ── */
+  .chapter-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--parchment-deep);
+    position: relative;
+  }
+
+  .chapter-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .chapter-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(18px, 3vw, 26px);
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .chapter-date {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-light);
+    opacity: 0.6;
+    margin-top: 6px;
+  }
+
+  /* Ornamental divider */
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0;
+    color: var(--gold);
+    font-size: 14px;
+    opacity: 0.5;
+  }
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--parchment-deep);
+  }
+
+  /* ── ILLUSTRATION ── */
+  .illustration-wrap {
+    margin: 0 -8px 28px;
+    position: relative;
+  }
+
+  .illustration-frame {
+    border: 2px solid var(--parchment-deep);
+    outline: 4px solid var(--parchment);
+    box-shadow: 0 4px 16px var(--shadow), inset 0 0 0 1px rgba(180,140,80,0.3);
+    overflow: hidden;
+    background: #2a1f14;
+  }
+
+  .illustration-frame img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+    opacity: 0.92;
+    filter: sepia(0.12) contrast(1.04);
+  }
+
+  .illustration-placeholder {
+    width: 100%;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(160deg, #2e2016 0%, #1a1008 100%);
+    color: var(--gold);
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+
+  .illustration-caption {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-light);
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0.65;
+    padding: 0 16px;
+  }
+
+  /* ── DROP CAP & BODY TEXT ── */
+  .story-body {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .story-body p { margin-bottom: 1.2em; }
+
+  .story-body p:first-child::first-letter {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 5.2em;
+    float: left;
+    line-height: 0.72;
+    margin: 0.08em 0.08em 0 0;
+    color: var(--red-wax);
+    text-shadow: 2px 2px 0 rgba(139,46,46,0.2);
+  }
+
+  /* ── CHARACTERS SIDEBAR ── */
+  .characters-section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--parchment-deep);
+  }
+
+  .section-label {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+
+  .characters-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .character-chip {
+    background: var(--parchment-dark);
+    border: 1px solid var(--parchment-deep);
+    border-radius: 3px;
+    padding: 7px 14px;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .character-chip:hover {
+    background: var(--parchment-deep);
+    border-color: var(--gold);
+    color: var(--ink);
+  }
+
+  /* ── NAVIGATION ── */
+  .page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--parchment-deep);
+    gap: 12px;
+  }
+
+  .nav-btn {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    background: none;
+    border: 1px solid var(--parchment-deep);
+    padding: 10px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-btn:hover:not(:disabled) {
+    background: var(--parchment-dark);
+    border-color: var(--gold);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .page-indicator {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-light);
+    opacity: 0.6;
+    text-align: center;
+    flex: 1;
+  }
+
+  /* ── PROGRESS SCROLL ── */
+  .scroll-nav {
+    width: 100%;
+    max-width: 780px;
+    margin-top: 28px;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+
+  .scroll-label {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--parchment-deep);
+    opacity: 0.6;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .scroll-track {
+    position: relative;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: visible;
+  }
+
+  .scroll-fill {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .scroll-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px; height: 12px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(212,168,84,0.5);
+    cursor: pointer;
+    transition: left 0.4s ease;
+  }
+
+  .scroll-days {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  .scroll-days span {
+    font-family: 'Crimson Pro', serif;
+    font-size: 11px;
+    color: var(--parchment-deep);
+    opacity: 0.5;
+    font-style: italic;
+  }
+
+  /* ── LOADING STATE ── */
+  .loading-state {
+    text-align: center;
+    padding: 80px 40px;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    opacity: 0.6;
+  }
+
+  .quill-spin {
+    display: inline-block;
+    font-size: 28px;
+    animation: quill 1.4s ease-in-out infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes quill {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-reveal {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 32px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--parchment-deep);
+    opacity: 0.4;
+    text-align: center;
+  }
+
+  @media (max-width: 560px) {
+    .book-inner { padding: 32px 24px 36px 44px; }
+    .story-body { font-size: 16px; }
+    .nav-btn { font-size: 10px; padding: 8px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-rule">
+    <span></span>
+    <span class="rune">᛭</span>
+    <span></span>
+  </div>
+  <h1 class="story-title" id="story-title">The Chronicles of Aevermore</h1>
+  <p class="story-subtitle" id="story-tagline">A tale written one day at a time</p>
+</header>
+
+<main class="book" id="book">
+  <div class="book-inner">
+    <div id="page-content">
+      <div class="loading-state">
+        <div class="quill-spin">✒</div>
+        <div>Turning the pages…</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<nav class="scroll-nav" id="scroll-nav" style="display:none">
+  <div class="scroll-label">The Chronicle So Far</div>
+  <div class="scroll-track">
+    <div class="scroll-fill" id="scroll-fill"></div>
+    <div class="scroll-thumb" id="scroll-thumb"></div>
+  </div>
+  <div class="scroll-days">
+    <span>Day 1</span>
+    <span id="scroll-end-label">Day 365</span>
+  </div>
+</nav>
+
+<footer class="footer">A story grows here, one page each dawn.</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIG — edit these to match your repo
+// ─────────────────────────────────────────────
+const CONFIG = {
+  repoOwner: 'metonyg',
+  repoName:  'gone-with-gomez',
+  branch:    'main',
+  storyTitle: 'The Chronicles of Aevermore',
+  storyTagline: 'A tale written one day at a time',
+};
+
+// ─────────────────────────────────────────────
+// SAMPLE DATA — used when no real pages exist yet
+// ─────────────────────────────────────────────
+const SAMPLE_PAGES = [
+  {
+    day: 1,
+    date: '2025-01-01',
+    chapterTitle: 'The Ember Beneath the Ash',
+    imageUrl: '',
+    imageCaption: 'The ruined tower of Morthis, where the first ember still burns.',
+    characters: ['Sable Ashveil', 'The Warden', 'Lirenne'],
+    text: `The tower had not spoken in forty years. That was what they said in Kelver's Crossing — the old women who braided rope by the well, the smiths who worked past dark, the children who were warned away from the ridge when the fog came down low. The tower of Morthis had fallen silent, and the world had quietly agreed to forget it.
+
+Sable Ashveil had not agreed.
+
+She climbed by feel, her lantern shuttered against the wind, one hand on stone that breathed cold through her gloves. The stairs were wrong. She had known they would be wrong — crumbling in places, absent in others — but there was a particular wrongness to the way the darkness pooled at the center of each landing, as though something had been standing there very recently and had only just thought to leave.
+
+At the seventh landing she stopped. The ember was real. She had told herself a dozen times on the road that it wouldn't be — that the fisherman who'd sold her the rumor had been drunk, or confused, or simply cruel in the way bored men could be. But there it sat in the hollow of the ancient hearthstone, no larger than a copper coin: a tongue of fire that cast no shadow and consumed nothing and had been burning, according to the oldest records she had found, since before the Accord.`
+  },
+  {
+    day: 2,
+    date: '2025-01-02',
+    chapterTitle: 'What the Warden Keeps',
+    imageUrl: '',
+    imageCaption: 'The Warden emerged from the shadows of the seventh landing.',
+    characters: ['Sable Ashveil', 'The Warden'],
+    text: `She heard it before she saw it: a sound like parchment tearing slowly in still air, a sound that had no business existing in a room with no paper and no wind. Then the shadows in the far corner rearranged themselves, and The Warden was there.
+
+It was not tall, which surprised her. She had imagined something vast. Instead it stood at perhaps her own height, wrapped in the kind of darkness that was not an absence of light so much as a presence of something older than light. Its face, if she was looking at a face, held two points of pale luminescence that moved like eyes but tracked the ember more than they tracked her.
+
+"You found it," it said. Its voice was the sound of stone settling deep underground, a vibration more felt than heard.
+
+Sable kept her hand away from the knife at her hip. Not because she thought the knife would help — she had read enough to know it wouldn't — but because reaching for it would tell the creature something about her she wasn't ready to share. "I was looking for it," she said instead.
+
+"Most who come here are looking for it." Something shifted in the pale points of light that might have been amusement, or its opposite. "You are the first in eleven years to arrive before midnight. The ember shows itself to those with patience, or urgency. Which are you?"`
+  }
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let allPages = [];
+let currentIndex = 0;
+
+// ─────────────────────────────────────────────
+// FETCH pages index from GitHub
+// ─────────────────────────────────────────────
+async function loadPages() {
+  document.getElementById('story-title').textContent = CONFIG.storyTitle;
+  document.getElementById('story-tagline').textContent = CONFIG.storyTagline;
+
+  // Try to load real index from GitHub
+  const indexUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/index.json`;
+  try {
+    const resp = await fetch(indexUrl);
+    if (resp.ok) {
+      const index = await resp.json();
+      // Load each page file
+      const pagePromises = index.pages.map(async (ref) => {
+        const pageUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/${ref.file}`;
+        const pr = await fetch(pageUrl);
+        return pr.ok ? pr.json() : null;
+      });
+      const loaded = (await Promise.all(pagePromises)).filter(Boolean);
+      allPages = loaded.sort((a, b) => a.day - b.day);
+    }
+  } catch(e) {
+    // Fall through to sample
+  }
+
+  // Fall back to sample data if nothing loaded
+  if (allPages.length === 0) {
+    allPages = SAMPLE_PAGES;
+  }
+
+  currentIndex = allPages.length - 1; // Show latest page by default
+  renderPage(currentIndex);
+  renderScrollNav();
+}
+
+// ─────────────────────────────────────────────
+// RENDER a page
+// ─────────────────────────────────────────────
+function renderPage(idx) {
+  const page = allPages[idx];
+  const content = document.getElementById('page-content');
+
+  const dateStr = page.date ? new Date(page.date + 'T12:00:00').toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '';
+
+  const imageHtml = page.imageUrl
+    ? `<div class="illustration-wrap">
+        <div class="illustration-frame">
+          <img src="${page.imageUrl}" alt="${page.imageCaption || ''}" loading="lazy">
+        </div>
+        ${page.imageCaption ? `<p class="illustration-caption">${page.imageCaption}</p>` : ''}
+       </div>`
+    : `<div class="illustration-wrap">
+        <div class="illustration-frame">
+          <div class="illustration-placeholder">
+            <div style="font-size:32px;opacity:0.4">🌙</div>
+            <div>Illustration forthcoming</div>
+          </div>
+        </div>
+        ${page.imageCaption ? `<p class="illustration-caption">${page.imageCaption}</p>` : ''}
+       </div>`;
+
+  const charactersHtml = page.characters && page.characters.length
+    ? `<div class="characters-section">
+        <div class="section-label">Characters in this page</div>
+        <div class="characters-grid">
+          ${page.characters.map(c => `<div class="character-chip">${c}</div>`).join('')}
+        </div>
+       </div>`
+    : '';
+
+  const paragraphs = (page.text || '').split(/\n\n+/).filter(Boolean)
+    .map(p => `<p>${p.trim()}</p>`).join('');
+
+  content.innerHTML = `
+    <div class="page-reveal">
+      <div class="chapter-header">
+        <div class="chapter-number">Day ${page.day} &nbsp;·&nbsp; Chapter ${idx + 1}</div>
+        <h2 class="chapter-title">${page.chapterTitle || 'Untitled'}</h2>
+        ${dateStr ? `<div class="chapter-date">${dateStr}</div>` : ''}
+      </div>
+
+      ${imageHtml}
+
+      <div class="ornament">✦ ✦ ✦</div>
+
+      <div class="story-body">${paragraphs}</div>
+
+      ${charactersHtml}
+
+      <div class="page-nav">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" ${idx === 0 ? 'disabled' : ''}>← Previous</button>
+        <div class="page-indicator">Page ${idx + 1} of ${allPages.length}</div>
+        <button class="nav-btn" id="btn-next" onclick="navigate(1)" ${idx === allPages.length - 1 ? 'disabled' : ''}>Next →</button>
+      </div>
+    </div>`;
+
+  updateScrollThumb();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+function navigate(dir) {
+  const next = currentIndex + dir;
+  if (next < 0 || next >= allPages.length) return;
+  currentIndex = next;
+  renderPage(currentIndex);
+}
+
+// ─────────────────────────────────────────────
+// SCROLL NAV
+// ─────────────────────────────────────────────
+function renderScrollNav() {
+  if (allPages.length <= 1) return;
+  const nav = document.getElementById('scroll-nav');
+  nav.style.display = 'block';
+  document.getElementById('scroll-end-label').textContent = `Day ${allPages[allPages.length-1].day}`;
+  updateScrollThumb();
+}
+
+function updateScrollThumb() {
+  if (allPages.length <= 1) return;
+  const pct = allPages.length > 1 ? (currentIndex / (allPages.length - 1)) * 100 : 0;
+  document.getElementById('scroll-fill').style.width = pct + '%';
+  document.getElementById('scroll-thumb').style.left = pct + '%';
+}
+
+// Click on scroll track to jump
+document.getElementById('scroll-nav')?.addEventListener('click', function(e) {
+  const track = document.getElementById('scroll-fill').parentElement;
+  const rect = track.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const idx = Math.round(pct * (allPages.length - 1));
+  currentIndex = idx;
+  renderPage(currentIndex);
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft')  navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+
+// ─────────────────────────────────────────────
+// BOOT
+// ─────────────────────────────────────────────
+loadPages();
+</script>
+</body>
+</html>

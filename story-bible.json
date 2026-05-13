@@ -1,0 +1,47 @@
+{
+  "title": "The Chronicles of Aevermore",
+  "genre": "Fantasy",
+  "tone": "Dark, literary, atmospheric. Think Ursula Le Guin meets Patrick Rothfuss.",
+  "setting": "The world of Aevermore — a continent recovering from a magical cataclysm called The Accord, 40 years prior. Magic is rare and distrusted. Ancient structures still hum with old power.",
+  "worldRules": [
+    "Magic is not cast — it is found. Old places hold it.",
+    "The Accord sealed most magical sites. Some seals are weakening.",
+    "No one alive remembers the world before The Accord clearly."
+  ],
+  "characters": [
+    {
+      "name": "Sable Ashveil",
+      "role": "Protagonist",
+      "age": 28,
+      "appearance": "Tall, dark-skinned, close-cropped silver-streaked hair (premature, stress-related). Wears practical traveling clothes, always carries a shuttered lantern and a small journal.",
+      "personality": "Methodical, quietly brave, deeply curious. Doesn't trust easily. Has a dry humor she rarely deploys.",
+      "motivation": "Searching for proof that The Accord was a lie — that the sealing of magic was a political act, not a necessity.",
+      "imagePrompt": "tall dark-skinned woman with short silver-streaked hair, wearing dark traveling cloak, holding a lantern, fantasy illustration, muted earth tones, candlelight"
+    },
+    {
+      "name": "The Warden",
+      "role": "Ambiguous ally / antagonist",
+      "age": "Unknown — ancient",
+      "appearance": "Appears at roughly human height but wrapped in animate shadow. Two pale luminous points for eyes. No clear face.",
+      "personality": "Deliberate, cryptic, oddly courteous. Speaks in statements that sound like questions.",
+      "motivation": "Unknown. Appears to be guarding something — or waiting for something.",
+      "imagePrompt": "shadowy figure wrapped in animate darkness, two pale glowing eyes, standing in ruined stone tower, fantasy illustration, dark atmospheric, candlelight"
+    },
+    {
+      "name": "Lirenne",
+      "role": "Supporting — mentioned but not yet seen",
+      "age": 31,
+      "appearance": "Redheaded, freckled, always warm-dressed. Former cartographer.",
+      "personality": "Practical optimist. The person Sable calls when she needs someone grounded.",
+      "motivation": "Helping Sable out of loyalty. Has her own doubts about The Accord.",
+      "imagePrompt": "redheaded freckled woman in warm layered clothing, carrying maps and survey tools, fantasy illustration, warm tones"
+    }
+  ],
+  "plotOutline": {
+    "act1": "Days 1–60: Sable discovers the ember and makes a pact with The Warden to seek the three Accord Stones.",
+    "act2": "Days 61–270: The journey. Each Accord Stone is in a different region. Each reveals a piece of the truth about The Accord. Lirenne joins in day 45.",
+    "act3": "Days 271–365: The truth is worse than Sable expected. The choice: expose it and destabilize the world, or protect the lie."
+  },
+  "narrativeStyle": "Third-person limited, past tense. Sable's POV only. Lyrical but never flowery. Concrete sensory detail. Dialogue is sparse but loaded.",
+  "rollingSummary": "Sable Ashveil, a researcher, has climbed the ruined tower of Morthis and found the legendary ember — a flame burning since before The Accord. She encountered The Warden, a shadow-creature guarding the tower, who asked whether she came from patience or urgency."
+}

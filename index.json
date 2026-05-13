@@ -1,0 +1,7 @@
+{
+  "storyTitle": "The Chronicles of Aevermore",
+  "storyTagline": "A tale written one day at a time",
+  "pages": [
+    { "day": 1, "file": "day-001.json" }
+  ]
+}
