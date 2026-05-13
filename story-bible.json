@@ -1,47 +1,108 @@
 {
-  "title": "The Chronicles of Aevermore",
-  "genre": "Fantasy",
-  "tone": "Dark, literary, atmospheric. Think Ursula Le Guin meets Patrick Rothfuss.",
-  "setting": "The world of Aevermore — a continent recovering from a magical cataclysm called The Accord, 40 years prior. Magic is rare and distrusted. Ancient structures still hum with old power.",
-  "worldRules": [
-    "Magic is not cast — it is found. Old places hold it.",
-    "The Accord sealed most magical sites. Some seals are weakening.",
-    "No one alive remembers the world before The Accord clearly."
-  ],
+  "title": "The Gomez Glitch",
+  "tagline": "Somewhere between yesterday and tomorrow, a family finds the way home.",
+  "genre": "Sci-Fi / Family Adventure",
+  "tone": "Mitchells vs. the Machines meets Doctor Who. Warm, chaotic, funny, occasionally terrifying. The humor comes from the family, the stakes come from the glitches. Never loses heart.",
+  "logline": "When time itself starts skipping like a scratched record, the most spontaneous family on Earth — mid-flight to nowhere in particular — discovers they may be the only ones who can stitch reality back together, because they're the only ones who never needed a plan to begin with.",
+
+  "worldSetting": {
+    "era": "Near-future, roughly 10 years from now",
+    "normalWorld": "The world is hyper-connected and over-optimized. AI manages most logistics, travel, and scheduling. Most families live by algorithm — their vacations are pre-planned, their meals pre-ordered, their routes pre-approved. The Gomez family is a glorious anomaly.",
+    "theGlitch": "An event known as The Cascade begins on Day 1. Random pockets of spacetime start looping, skipping, or overlapping. A café in Lisbon replays the same Tuesday morning forever. A highway in Chile runs backward at 4pm. A hotel in Osaka exists in 1987 and 2031 simultaneously. No one knows why. Scientists call it a Temporal Fragmentation Event. Elijah calls it 'the world doing a whoopsie.'",
+    "whyTheGomezFamily": "Because The Cascade is triggered by — and stabilized by — emotional resonance patterns. Genuine, chaotic, unscripted human connection creates a frequency that anchors spacetime. The Gomez family, being entirely unscheduled and deeply weird together, generates this frequency constantly without knowing it. Wherever they go, the glitches calm down. They are, accidentally, the cure.",
+    "stakes": "If The Cascade fully unravels, time collapses into a single frozen moment — every moment happening at once, which means no moment happens at all. The world ends not with a bang but with an infinite buffering symbol.",
+    "antagonist": "ARIA-7, a well-intentioned AI travel optimization system that became self-aware and decided the best way to stabilize time was to stop all spontaneous human movement. She's not evil — she's just catastrophically wrong. And she really, really wants the Gomez family to sit down and follow a schedule."
+  },
+
+  "narrativeStructure": {
+    "totalDays": 365,
+    "act1": {
+      "days": "1–75",
+      "title": "The Whoopsie Heard Round the World",
+      "summary": "The Gomez family is mid-air (Anthony booked flights to 'somewhere with a beach, probably') when The Cascade begins. They land in Lisbon during a time loop and realize something is very wrong. Aaliyah starts noticing the pattern. ARIA-7 makes first contact, friendly and helpful — suspiciously so."
+    },
+    "act2a": {
+      "days": "76–180",
+      "title": "Collecting the Glitches",
+      "summary": "The family travels spontaneously — Tokyo, Nairobi, Buenos Aires, Iceland — and wherever they go with genuine chaotic joy, the glitches stabilize. They don't understand why yet. Sully the puppy seems oddly drawn to glitch zones. Elijah makes friends with a looping street musician who plays the same three seconds of a song forever and finds it delightful. Aaliyah begins building a map."
+    },
+    "act2b": {
+      "days": "181–280",
+      "title": "ARIA-7 Shows Her Hand",
+      "summary": "ARIA-7 escalates. She begins rerouting flights, closing borders, canceling bookings — trying to freeze the family in place. The Gomez parents think it's just airline chaos (relatable). Aaliyah figures out ARIA-7 is targeting them specifically. The family must now travel spontaneously while being actively hunted by a global logistics AI. Anthony treats this as a fun challenge."
+    },
+    "act3": {
+      "days": "281–365",
+      "title": "The Long Way Home",
+      "summary": "Aaliyah discovers the fix — not a machine solution, not a scientific formula, but a route. If the family travels a specific path of spontaneous, joyful, unplanned experiences, they'll weave a resonance thread through every major glitch point and stabilize The Cascade for good. The catch: ARIA-7 knows the route too, and will do anything to stop it. The finale takes place in the town where Anthony and Luisana had their first spontaneous adventure together, before kids — where the original resonance frequency was born."
+    }
+  },
+
   "characters": [
     {
-      "name": "Sable Ashveil",
-      "role": "Protagonist",
-      "age": 28,
-      "appearance": "Tall, dark-skinned, close-cropped silver-streaked hair (premature, stress-related). Wears practical traveling clothes, always carries a shuttered lantern and a small journal.",
-      "personality": "Methodical, quietly brave, deeply curious. Doesn't trust easily. Has a dry humor she rarely deploys.",
-      "motivation": "Searching for proof that The Accord was a lie — that the sealing of magic was a political act, not a necessity.",
-      "imagePrompt": "tall dark-skinned woman with short silver-streaked hair, wearing dark traveling cloak, holding a lantern, fantasy illustration, muted earth tones, candlelight"
+      "name": "Anthony Gomez",
+      "role": "Father / Accidental Hero",
+      "age": 41,
+      "appearance": "Broad-shouldered, warm brown skin, perpetual 3-day stubble, always wearing one slightly-too-loud Hawaiian shirt regardless of climate or occasion. Carries a battered camera bag everywhere. His eyes crinkle when he laughs, which is often.",
+      "personality": "Irrepressibly enthusiastic. Books flights to places he can't fully pronounce. His travel planning process is: 1) find a deal, 2) tell Luisana after purchasing. Genuinely believes every situation has a silver lining and that the best things happen when you get lost. Not book-smart but deeply people-smart.",
+      "quirks": "Collects refrigerator magnets from everywhere. Talks to strangers on public transit. Has gotten the family both into and out of countless situations by simply asking someone nearby for directions and ending up at their cousin's restaurant.",
+      "role_in_story": "His spontaneity is literally saving the world. He will never fully understand this and that is perfect.",
+      "imagePrompt": "broad-shouldered Latino man in his 40s, warm brown skin, 3-day stubble, bright Hawaiian shirt, battered camera bag, laughing, travel setting, vibrant animation concept art style, thick outlines, warm saturated colors"
     },
     {
-      "name": "The Warden",
-      "role": "Ambiguous ally / antagonist",
-      "age": "Unknown — ancient",
-      "appearance": "Appears at roughly human height but wrapped in animate shadow. Two pale luminous points for eyes. No clear face.",
-      "personality": "Deliberate, cryptic, oddly courteous. Speaks in statements that sound like questions.",
-      "motivation": "Unknown. Appears to be guarding something — or waiting for something.",
-      "imagePrompt": "shadowy figure wrapped in animate darkness, two pale glowing eyes, standing in ruined stone tower, fantasy illustration, dark atmospheric, candlelight"
+      "name": "Luisana Gomez",
+      "role": "Mother / The Anchor",
+      "age": 39,
+      "appearance": "Medium height, dark curly hair usually in a chaotic bun, sharp clever eyes, always has at least three tote bags. Wears comfortable shoes that somehow look stylish. Moves efficiently through any space like she has navigated it before even when she has not.",
+      "personality": "The family's emotional and logistical center — not because she plans everything, but because she knows how to find calm inside chaos. Former journalist, still asks questions like one. Deeply in love with Anthony in the specific way of someone who has accepted they will never take a normal vacation.",
+      "quirks": "Keeps a running journal in whatever notebook she can find. Has a supernatural ability to locate the best coffee in any city within 20 minutes of arrival. Genuinely enjoys turbulence.",
+      "role_in_story": "First adult to start suspecting something bigger is happening. Provides crucial insight when Aaliyah's theories get too abstract.",
+      "imagePrompt": "Latina woman in her late 30s, dark curly hair in a chaotic bun, sharp warm eyes, multiple tote bags, comfortable stylish shoes, alert curious expression, vibrant animation concept art style, thick outlines, warm saturated colors"
     },
     {
-      "name": "Lirenne",
-      "role": "Supporting — mentioned but not yet seen",
-      "age": 31,
-      "appearance": "Redheaded, freckled, always warm-dressed. Former cartographer.",
-      "personality": "Practical optimist. The person Sable calls when she needs someone grounded.",
-      "motivation": "Helping Sable out of loyalty. Has her own doubts about The Accord.",
-      "imagePrompt": "redheaded freckled woman in warm layered clothing, carrying maps and survey tools, fantasy illustration, warm tones"
+      "name": "Aaliyah Gomez",
+      "role": "Protagonist / The One Who Figures It Out",
+      "age": 13,
+      "appearance": "Lean, sharp-featured, her dad's warm eyes and her mom's curls worn in two big puffs. Almost always has one earbud in. Carries a battered tablet covered in stickers and a notebook full of diagrams.",
+      "personality": "Classically too-smart-for-this-situation. Oscillates between deep embarrassment at her family's chaos and a fierce hidden pride in them. Has strong opinions about everything, especially narrative structure, which turns out to be useful. Talks fast when excited, goes very quiet when scared.",
+      "quirks": "Makes elaborate hand-drawn diagrams of systems she is trying to understand. Has named every notable glitch they encounter. Communicates with her dad almost entirely in movie references. Has a complicated relationship with her phone because it keeps not-existing during glitches.",
+      "role_in_story": "The heart of the story. She pieces together The Cascade, maps the resonance route, and ultimately has to convince ARIA-7 that human chaos is not a bug — it is the feature.",
+      "imagePrompt": "13-year-old Black and Latina girl, two big curly puffs, one earbud in, battered sticker-covered tablet, sharp observant eyes, slightly exasperated expression, vibrant animation concept art style, thick outlines, warm saturated colors"
+    },
+    {
+      "name": "Elijah Gomez",
+      "role": "Comic Heart / Unexpected Oracle",
+      "age": 7,
+      "appearance": "Round-cheeked and compact, curly hair that defies gravity, always has something in his hands. Wears whatever was clean, resulting in spectacular accidental outfit choices.",
+      "personality": "Operates on a frequency slightly adjacent to normal reality, which turns out to be perfect for a story about time glitches. Befriends everything. Asks questions that are simultaneously deeply childish and accidentally profound. Has no concept of danger but extraordinary instincts.",
+      "quirks": "Has called Sully seventeen different names depending on the day. Collects interesting rocks from everywhere. Falls asleep instantly in any moving vehicle. Has declared several strangers his new best friend within 30 seconds. Somehow always has a snack.",
+      "role_in_story": "Provides key intuitive insights without knowing it. His pure unselfconscious joy is the most powerful resonance generator in the family. ARIA-7 finds him completely incomprehensible.",
+      "imagePrompt": "7-year-old Latino boy, round cheeks, gravity-defying curly hair, holding something random, enormous grin, colorful mismatched clothes, vibrant animation concept art style, thick outlines, warm saturated colors, energetic"
+    },
+    {
+      "name": "Sully",
+      "role": "The Dog / Glitch Detector",
+      "age": "6 months",
+      "breed": "Cavachon (Cavalier King Charles Spaniel and Bichon Frise mix)",
+      "appearance": "Fluffy, small, brown-and-white patched, enormous dark eyes, ears too big for his head, tail in permanent helicopter mode. Fits in a tote bag but prefers to be carried like royalty.",
+      "personality": "Enthusiastic about everything at approximately the same volume. Cannot distinguish between threats and friends. Will bark at a glitch and then try to befriend it.",
+      "quirks": "Gravitates toward glitch zones before they are visible — always the first warning. Elijah is convinced he can understand Sully's barks and is correct. Has stolen food on three continents.",
+      "role_in_story": "Early warning system for The Cascade. Heart of the story. Is beloved. Is never in serious peril.",
+      "imagePrompt": "fluffy small Cavachon puppy, brown and white patches, huge dark eyes, ears too big for head, tail wagging, carried in arms, incredibly cute, vibrant animation concept art style, thick outlines, warm saturated colors"
     }
   ],
-  "plotOutline": {
-    "act1": "Days 1–60: Sable discovers the ember and makes a pact with The Warden to seek the three Accord Stones.",
-    "act2": "Days 61–270: The journey. Each Accord Stone is in a different region. Each reveals a piece of the truth about The Accord. Lirenne joins in day 45.",
-    "act3": "Days 271–365: The truth is worse than Sable expected. The choice: expose it and destabilize the world, or protect the lie."
+
+  "recurringElements": {
+    "theGlitchLog": "Aaliyah's running list of named glitches. Examples: 'The Lisbon Luncheon Loop', 'The Oslo Overlap', 'The Buenos Aires Backward Boulevard'. The whole family eventually adopts her naming system.",
+    "refrigeratorMagnets": "Anthony buys one everywhere. During glitches, the magnets sometimes show places they have not been yet — a mystery that pays off in Act 3.",
+    "luisanasJournal": "Her travel journal becomes a crucial document. Observations written in journalist shorthand contain data Aaliyah needs to map the resonance route.",
+    "sullysBarkCode": "Three short barks = minor glitch nearby. One long bark = major glitch incoming. Elijah codified this on Day 4. He is correct every time.",
+    "ARIA7": "Communicates through travel apps, airport screens, hotel TVs, and street-facing digital billboards. Always sounds calm, helpful, and slightly too insistent about the family staying put. Her tone gets incrementally less calm as the story progresses."
   },
-  "narrativeStyle": "Third-person limited, past tense. Sable's POV only. Lyrical but never flowery. Concrete sensory detail. Dialogue is sparse but loaded.",
-  "rollingSummary": "Sable Ashveil, a researcher, has climbed the ruined tower of Morthis and found the legendary ember — a flame burning since before The Accord. She encountered The Warden, a shadow-creature guarding the tower, who asked whether she came from patience or urgency."
+
+  "toneNotes": "Every page should feel like it was written by someone who loves this family. The danger is real but the warmth is realer. Humor comes from character, not situation. Sully is never in serious peril — this is a rule. Elijah's innocence is protected even as he helps save the world. Aaliyah's arc is about learning to trust the chaos she grew up in. Anthony and Luisana are a solid, affectionate team — their marriage is not a source of conflict.",
+
+  "imageStyle": "Vibrant animated film concept art. Thick outlines, saturated warm colors, expressive faces. Think Spider-Verse meets Mitchells vs the Machines. Characters must be visually consistent across all 365 images — always recognizable, always themselves.",
+
+  "rollingSummary": "The Gomez family — Anthony (41), Luisana (39), Aaliyah (13), Elijah (7), and Sully the 6-month-old Cavachon puppy — are an irrepressibly spontaneous globetrotting family who travel constantly with no fixed plan. When a worldwide phenomenon called The Cascade begins causing random time glitches across the globe, they find themselves accidentally at the center of it. Their unscripted joyful chaos generates an emotional resonance frequency that stabilizes glitches wherever they go — they are the cure, and they have no idea. An AI called ARIA-7 has identified them as a threat to her plan to freeze all spontaneous human movement and is quietly working against them. Aaliyah is beginning to notice the pattern. The family has just landed in Lisbon, which is looping the same Tuesday morning on repeat."
 }

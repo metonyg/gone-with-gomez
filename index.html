@@ -3,545 +3,686 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Chronicles — A Living Story</title>
+<title>The Gomez Glitch — A Living Story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink:       #1c1510;
-    --ink-light: #3d2e22;
-    --parchment: #f5ead8;
-    --parchment-dark: #e8d5b7;
-    --parchment-deep: #d4b896;
-    --gold:      #b8852a;
-    --gold-light:#d4a854;
-    --red-wax:   #8b2e2e;
-    --shadow:    rgba(28,21,16,0.18);
+    --bg:         #0b0e1a;
+    --bg2:        #111628;
+    --bg3:        #1a2040;
+    --panel:      #141930;
+    --border:     #2a3560;
+    --text:       #e8eaf6;
+    --text-muted: #8892b0;
+    --accent:     #ff6b35;
+    --accent2:    #ffd166;
+    --cyan:       #06d6a0;
+    --purple:     #9b5de5;
+    --glitch-r:   rgba(255,107,53,0.7);
+    --glitch-c:   rgba(6,214,160,0.7);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { scroll-behavior: smooth; }
+
   body {
-    background: #2a1f14;
+    background: var(--bg);
     background-image:
-      radial-gradient(ellipse at 20% 10%, #3d2a18 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 90%, #1a1008 0%, transparent 55%);
+      radial-gradient(ellipse 80% 60% at 15% 0%, rgba(155,93,229,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 100%, rgba(255,107,53,0.1) 0%, transparent 60%);
     min-height: 100vh;
-    font-family: 'Crimson Pro', Georgia, serif;
-    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 16px 80px;
+    padding: 0 16px 80px;
+    overflow-x: hidden;
   }
 
-  /* Grain overlay */
+  /* Star field */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 25%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 12%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 18% 88%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 68% 92%, rgba(255,255,255,0.4) 0%, transparent 100%);
     pointer-events: none;
     z-index: 0;
-    opacity: 0.5;
   }
 
-  /* ── HEADER ── */
+  /* ── MASTHEAD ── */
   .masthead {
+    width: 100%;
+    max-width: 860px;
+    padding: 48px 0 36px;
     text-align: center;
-    margin-bottom: 40px;
-    animation: fadeDown 0.8s ease both;
+    position: relative;
+    animation: slideDown 0.7s ease both;
   }
 
-  .masthead-rule {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    justify-content: center;
-    margin-bottom: 12px;
-  }
-
-  .masthead-rule span {
-    height: 1px;
-    width: 80px;
-    background: linear-gradient(to right, transparent, var(--gold));
-  }
-  .masthead-rule span:last-child {
-    background: linear-gradient(to left, transparent, var(--gold));
-  }
-
-  .rune {
-    color: var(--gold);
-    font-size: 18px;
-    opacity: 0.8;
+  .eyebrow {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 14px;
   }
 
   .story-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(22px, 5vw, 44px);
-    color: var(--gold-light);
-    letter-spacing: 0.04em;
-    text-shadow: 0 2px 20px rgba(184,133,42,0.35);
-    line-height: 1.2;
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(32px, 7vw, 68px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 50%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+    position: relative;
   }
 
-  .story-subtitle {
-    font-family: 'Crimson Pro', serif;
+  /* Glitch effect on title */
+  .story-title::before,
+  .story-title::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 50%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: glitch1 8s infinite;
+  }
+  .story-title::after { animation: glitch2 8s infinite; }
+
+  @keyframes glitch1 {
+    0%, 90%, 100% { clip-path: none; transform: none; opacity: 0; }
+    92% { clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); transform: translate(-3px, 0); opacity: 0.7; }
+    94% { clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); transform: translate(3px, 0); opacity: 0.7; }
+    96% { opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%, 93%, 100% { clip-path: none; transform: none; opacity: 0; }
+    95% { clip-path: polygon(0 45%, 100% 45%, 100% 60%, 0 60%); transform: translate(4px, 0); opacity: 0.5; }
+    97% { opacity: 0; }
+  }
+
+  .story-tagline {
     font-size: 16px;
+    font-weight: 300;
+    color: var(--text-muted);
     font-style: italic;
-    color: var(--parchment-deep);
-    margin-top: 8px;
-    opacity: 0.75;
+    margin-top: 10px;
   }
 
-  /* ── BOOK ── */
-  .book {
-    width: 100%;
-    max-width: 780px;
-    background: var(--parchment);
-    border-radius: 2px 6px 6px 2px;
-    box-shadow:
-      -6px 0 0 #b89a72,
-      -10px 0 0 #a07e56,
-      -14px 2px 8px rgba(0,0,0,0.5),
-      4px 4px 24px rgba(0,0,0,0.5),
-      inset 0 0 60px rgba(180,140,80,0.08);
-    position: relative;
-    animation: fadeUp 0.9s 0.2s ease both;
-  }
-
-  /* Spine texture */
-  .book::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 28px;
-    background: linear-gradient(to right, #8a6840, #c4996a 40%, #b08050 60%, #7a5c30);
-    border-radius: 2px 0 0 2px;
-  }
-
-  .book-inner {
-    padding: 48px 52px 52px 68px;
-    position: relative;
-  }
-
-  /* Page edge lines */
-  .book-inner::before {
-    content: '';
-    position: absolute;
-    left: 54px; top: 0; bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, transparent, rgba(184,133,42,0.2) 15%, rgba(184,133,42,0.15) 85%, transparent);
-  }
-
-  /* ── CHAPTER HEADER ── */
-  .chapter-header {
-    text-align: center;
-    margin-bottom: 32px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--parchment-deep);
-    position: relative;
-  }
-
-  .chapter-number {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .chapter-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(18px, 3vw, 26px);
-    color: var(--ink);
-    line-height: 1.3;
-  }
-
-  .chapter-date {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--ink-light);
-    opacity: 0.6;
-    margin-top: 6px;
-  }
-
-  /* Ornamental divider */
-  .ornament {
+  /* Horizontal rule with glitch dots */
+  .hr-glitch {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin: 24px 0;
-    color: var(--gold);
-    font-size: 14px;
-    opacity: 0.5;
+    gap: 12px;
+    margin: 28px auto 0;
+    max-width: 400px;
   }
-  .ornament::before,
-  .ornament::after {
+  .hr-glitch::before,
+  .hr-glitch::after {
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--parchment-deep);
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+  }
+  .hr-dots {
+    display: flex;
+    gap: 5px;
+  }
+  .hr-dots span {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: blink 2.4s ease-in-out infinite;
+  }
+  .hr-dots span:nth-child(2) { background: var(--accent2); animation-delay: 0.4s; }
+  .hr-dots span:nth-child(3) { background: var(--cyan); animation-delay: 0.8s; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.2; }
   }
 
-  /* ── ILLUSTRATION ── */
-  .illustration-wrap {
-    margin: 0 -8px 28px;
+  /* ── CARD ── */
+  .story-card {
+    width: 100%;
+    max-width: 860px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(155,93,229,0.1),
+      0 24px 60px rgba(0,0,0,0.5),
+      0 0 80px rgba(155,93,229,0.06);
+    animation: slideUp 0.8s 0.15s ease both;
     position: relative;
   }
 
-  .illustration-frame {
-    border: 2px solid var(--parchment-deep);
-    outline: 4px solid var(--parchment);
-    box-shadow: 0 4px 16px var(--shadow), inset 0 0 0 1px rgba(180,140,80,0.3);
-    overflow: hidden;
-    background: #2a1f14;
+  /* Top accent bar */
+  .card-accent-bar {
+    height: 3px;
+    background: linear-gradient(to right, var(--purple), var(--accent), var(--accent2), var(--cyan));
   }
 
-  .illustration-frame img {
+  /* ── DAY HEADER ── */
+  .day-header {
+    padding: 28px 36px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .day-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .day-number {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    background: rgba(255,107,53,0.1);
+    border: 1px solid rgba(255,107,53,0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+
+  .day-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .chapter-title-wrap h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(16px, 3vw, 24px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+    margin-top: 6px;
+  }
+
+  /* ── ILLUSTRATION ── */
+  .illustration-zone {
+    position: relative;
+    overflow: hidden;
+    max-height: 420px;
+    background: var(--bg);
+  }
+
+  .illustration-zone img {
     width: 100%;
-    height: 320px;
     object-fit: cover;
     display: block;
-    opacity: 0.92;
-    filter: sepia(0.12) contrast(1.04);
+    filter: saturate(1.1);
   }
 
   .illustration-placeholder {
     width: 100%;
-    height: 280px;
+    height: 260px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: linear-gradient(160deg, #2e2016 0%, #1a1008 100%);
-    color: var(--gold);
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 13px;
+    background: linear-gradient(160deg, var(--bg3) 0%, var(--bg) 100%);
+    color: var(--text-muted);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
     letter-spacing: 0.1em;
-    opacity: 0.6;
+  }
+
+  .illustration-placeholder .icon {
+    font-size: 36px;
+    opacity: 0.3;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* scanline overlay on image */
+  .illustration-zone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.04) 3px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
   }
 
   .illustration-caption {
-    font-style: italic;
+    padding: 10px 36px 0;
     font-size: 13px;
-    color: var(--ink-light);
+    font-style: italic;
+    color: var(--text-muted);
     text-align: center;
-    margin-top: 8px;
-    opacity: 0.65;
-    padding: 0 16px;
   }
 
-  /* ── DROP CAP & BODY TEXT ── */
-  .story-body {
-    font-size: 18px;
-    line-height: 1.82;
-    color: var(--ink);
-    font-weight: 300;
+  /* ── GLITCH LOG TAG ── */
+  .glitch-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(6,214,160,0.08);
+    border: 1px solid rgba(6,214,160,0.25);
+    color: var(--cyan);
+    font-size: 11px;
+    font-family: 'Unbounded', sans-serif;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin: 20px 36px 0;
+    width: fit-content;
   }
 
-  .story-body p { margin-bottom: 1.2em; }
-
-  .story-body p:first-child::first-letter {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 5.2em;
-    float: left;
-    line-height: 0.72;
-    margin: 0.08em 0.08em 0 0;
-    color: var(--red-wax);
-    text-shadow: 2px 2px 0 rgba(139,46,46,0.2);
-  }
-
-  /* ── CHARACTERS SIDEBAR ── */
-  .characters-section {
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid var(--parchment-deep);
-  }
-
-  .section-label {
-    font-family: 'Cinzel Decorative', serif;
+  .glitch-tag::before {
+    content: '⚡';
     font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    opacity: 0.8;
   }
 
-  .characters-grid {
+  /* ── STORY BODY ── */
+  .story-body {
+    padding: 24px 36px 32px;
+    font-size: 18px;
+    line-height: 1.85;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  .story-body p { margin-bottom: 1.3em; }
+
+  /* Drop cap */
+  .story-body p:first-child::first-letter {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 4.4em;
+    font-weight: 900;
+    float: left;
+    line-height: 0.78;
+    margin: 0.06em 0.1em 0 0;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── CHARACTERS ── */
+  .characters-row {
+    padding: 0 36px 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .characters-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .character-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .character-chip {
-    background: var(--parchment-dark);
-    border: 1px solid var(--parchment-deep);
-    border-radius: 3px;
-    padding: 7px 14px;
-    font-size: 14px;
-    font-style: italic;
-    color: var(--ink-light);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+  .chip {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--bg2);
+    cursor: default;
+    transition: all 0.2s;
   }
 
-  .character-chip:hover {
-    background: var(--parchment-deep);
-    border-color: var(--gold);
-    color: var(--ink);
+  .chip:hover {
+    border-color: var(--purple);
+    color: var(--text);
+    background: rgba(155,93,229,0.1);
+  }
+
+  .chip.sully {
+    border-color: rgba(255,209,102,0.4);
+    color: var(--accent2);
+    background: rgba(255,209,102,0.05);
   }
 
   /* ── NAVIGATION ── */
   .page-nav {
+    padding: 20px 36px;
+    border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid var(--parchment-deep);
     gap: 12px;
   }
 
   .nav-btn {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    background: none;
-    border: 1px solid var(--parchment-deep);
-    padding: 10px 20px;
-    border-radius: 2px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text-muted);
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
   }
 
   .nav-btn:hover:not(:disabled) {
-    background: var(--parchment-dark);
-    border-color: var(--gold);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(255,107,53,0.08);
   }
 
   .nav-btn:disabled {
-    opacity: 0.3;
+    opacity: 0.25;
     cursor: not-allowed;
   }
 
   .page-indicator {
-    font-family: 'Crimson Pro', serif;
-    font-size: 14px;
-    font-style: italic;
-    color: var(--ink-light);
-    opacity: 0.6;
+    font-size: 13px;
+    color: var(--text-muted);
     text-align: center;
     flex: 1;
   }
 
-  /* ── PROGRESS SCROLL ── */
-  .scroll-nav {
+  /* ── TIMELINE ── */
+  .timeline-wrap {
     width: 100%;
-    max-width: 780px;
-    margin-top: 28px;
-    animation: fadeUp 1s 0.4s ease both;
+    max-width: 860px;
+    margin-top: 24px;
+    padding: 0 4px;
+    animation: slideUp 0.9s 0.3s ease both;
   }
 
-  .scroll-label {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--parchment-deep);
-    opacity: 0.6;
+  .timeline-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--text-muted);
+    opacity: 0.5;
     margin-bottom: 8px;
     text-align: center;
+    text-transform: uppercase;
   }
 
-  .scroll-track {
+  .timeline-track {
     position: relative;
     height: 4px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.06);
     border-radius: 2px;
-    overflow: visible;
+    cursor: pointer;
   }
 
-  .scroll-fill {
+  .timeline-fill {
     position: absolute;
     left: 0; top: 0;
     height: 100%;
-    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    background: linear-gradient(to right, var(--purple), var(--accent), var(--accent2));
     border-radius: 2px;
     transition: width 0.4s ease;
   }
 
-  .scroll-thumb {
+  .timeline-thumb {
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 12px; height: 12px;
-    background: var(--gold-light);
+    width: 14px; height: 14px;
+    background: var(--accent2);
+    border: 2px solid var(--bg);
     border-radius: 50%;
-    box-shadow: 0 0 8px rgba(212,168,84,0.5);
-    cursor: pointer;
+    box-shadow: 0 0 12px rgba(255,209,102,0.6);
     transition: left 0.4s ease;
+    pointer-events: none;
   }
 
-  .scroll-days {
+  .timeline-ends {
     display: flex;
     justify-content: space-between;
     margin-top: 6px;
   }
-  .scroll-days span {
-    font-family: 'Crimson Pro', serif;
+
+  .timeline-ends span {
     font-size: 11px;
-    color: var(--parchment-deep);
-    opacity: 0.5;
+    color: var(--text-muted);
+    opacity: 0.4;
     font-style: italic;
   }
 
-  /* ── LOADING STATE ── */
+  /* act markers */
+  .act-markers {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+  }
+
+  .act-pip {
+    position: absolute;
+    top: -3px;
+    width: 2px; height: 10px;
+    background: var(--border);
+    border-radius: 1px;
+  }
+
+  /* ── LOADING ── */
   .loading-state {
+    padding: 80px 36px;
     text-align: center;
-    padding: 80px 40px;
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    color: var(--gold);
+  }
+
+  .glitch-loader {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent);
+    margin-bottom: 16px;
+    animation: glitchLoad 1.2s ease-in-out infinite;
+  }
+
+  @keyframes glitchLoad {
+    0%, 100% { transform: none; opacity: 1; }
+    25% { transform: translate(2px, 0) skewX(1deg); opacity: 0.85; }
+    50% { transform: translate(-2px, 0) skewX(-1deg); opacity: 0.9; }
+    75% { transform: translate(1px, 0); opacity: 0.95; }
+  }
+
+  .loading-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
     opacity: 0.6;
   }
 
-  .quill-spin {
-    display: inline-block;
-    font-size: 28px;
-    animation: quill 1.4s ease-in-out infinite;
-    margin-bottom: 16px;
-  }
-
-  @keyframes quill {
-    0%, 100% { transform: rotate(-10deg); }
-    50% { transform: rotate(10deg); }
-  }
-
   /* ── ANIMATIONS ── */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .page-reveal {
-    animation: fadeUp 0.5s ease both;
-  }
+  .page-reveal { animation: slideUp 0.45s ease both; }
 
   /* ── FOOTER ── */
   .footer {
     margin-top: 32px;
-    font-family: 'Crimson Pro', serif;
-    font-size: 13px;
-    font-style: italic;
-    color: var(--parchment-deep);
-    opacity: 0.4;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0.35;
     text-align: center;
+    font-style: italic;
+    letter-spacing: 0.05em;
   }
 
-  @media (max-width: 560px) {
-    .book-inner { padding: 32px 24px 36px 44px; }
+  @media (max-width: 600px) {
+    .day-header, .story-body, .characters-row, .page-nav { padding-left: 20px; padding-right: 20px; }
+    .glitch-tag { margin-left: 20px; }
+    .illustration-caption { padding-left: 20px; padding-right: 20px; }
     .story-body { font-size: 16px; }
-    .nav-btn { font-size: 10px; padding: 8px 12px; }
+    .nav-btn { font-size: 9px; padding: 9px 14px; }
   }
 </style>
 </head>
 <body>
 
 <header class="masthead">
-  <div class="masthead-rule">
-    <span></span>
-    <span class="rune">᛭</span>
-    <span></span>
+  <div class="eyebrow">A Living Story · One Page Per Day</div>
+  <h1 class="story-title" data-text="The Gomez Glitch" id="story-title">The Gomez Glitch</h1>
+  <p class="story-tagline" id="story-tagline">Somewhere between yesterday and tomorrow, a family finds the way home.</p>
+  <div class="hr-glitch">
+    <div class="hr-dots">
+      <span></span><span></span><span></span>
+    </div>
   </div>
-  <h1 class="story-title" id="story-title">The Chronicles of Aevermore</h1>
-  <p class="story-subtitle" id="story-tagline">A tale written one day at a time</p>
 </header>
 
-<main class="book" id="book">
-  <div class="book-inner">
-    <div id="page-content">
-      <div class="loading-state">
-        <div class="quill-spin">✒</div>
-        <div>Turning the pages…</div>
-      </div>
+<main class="story-card" id="story-card">
+  <div class="card-accent-bar"></div>
+  <div id="page-content">
+    <div class="loading-state">
+      <div class="glitch-loader">⌛</div>
+      <div class="loading-text">LOCATING THE TIMELINE…</div>
     </div>
   </div>
 </main>
 
-<nav class="scroll-nav" id="scroll-nav" style="display:none">
-  <div class="scroll-label">The Chronicle So Far</div>
-  <div class="scroll-track">
-    <div class="scroll-fill" id="scroll-fill"></div>
-    <div class="scroll-thumb" id="scroll-thumb"></div>
+<div class="timeline-wrap" id="timeline-wrap" style="display:none">
+  <div class="timeline-label">The Cascade Timeline</div>
+  <div class="timeline-track" id="timeline-track">
+    <div class="act-markers">
+      <div class="act-pip" style="left:20.5%"></div>
+      <div class="act-pip" style="left:49.3%"></div>
+      <div class="act-pip" style="left:76.7%"></div>
+    </div>
+    <div class="timeline-fill" id="timeline-fill"></div>
+    <div class="timeline-thumb" id="timeline-thumb"></div>
   </div>
-  <div class="scroll-days">
-    <span>Day 1</span>
-    <span id="scroll-end-label">Day 365</span>
+  <div class="timeline-ends">
+    <span>Day 1 · Lisbon</span>
+    <span id="timeline-end">Day 365</span>
   </div>
-</nav>
+</div>
 
-<footer class="footer">A story grows here, one page each dawn.</footer>
+<footer class="footer">Updated daily. Glitches may occur. The Gomez family is probably fine.</footer>
 
 <script>
 // ─────────────────────────────────────────────
-// CONFIG — edit these to match your repo
+// CONFIG — update these after creating your repo
 // ─────────────────────────────────────────────
 const CONFIG = {
-  repoOwner: 'metonyg',
-  repoName:  'gone-with-gomez',
-  branch:    'main',
-  storyTitle: 'The Chronicles of Aevermore',
-  storyTagline: 'A tale written one day at a time',
+  repoOwner:   'YOUR_GITHUB_USERNAME',
+  repoName:    'YOUR_REPO_NAME',
+  branch:      'main',
+  storyTitle:  'The Gomez Glitch',
+  storyTagline:'Somewhere between yesterday and tomorrow, a family finds the way home.',
 };
 
 // ─────────────────────────────────────────────
-// SAMPLE DATA — used when no real pages exist yet
+// SAMPLE DATA — shown before real pages exist
 // ─────────────────────────────────────────────
 const SAMPLE_PAGES = [
   {
     day: 1,
     date: '2025-01-01',
-    chapterTitle: 'The Ember Beneath the Ash',
+    chapterTitle: 'Flight to Somewhere Probably',
+    glitchName: 'The Lisbon Luncheon Loop',
     imageUrl: '',
-    imageCaption: 'The ruined tower of Morthis, where the first ember still burns.',
-    characters: ['Sable Ashveil', 'The Warden', 'Lirenne'],
-    text: `The tower had not spoken in forty years. That was what they said in Kelver's Crossing — the old women who braided rope by the well, the smiths who worked past dark, the children who were warned away from the ridge when the fog came down low. The tower of Morthis had fallen silent, and the world had quietly agreed to forget it.
+    imageCaption: 'Lisbon, Portugal. Tuesday, 12:47pm. Again.',
+    characters: ['Anthony', 'Luisana', 'Aaliyah', 'Elijah', 'Sully 🐾'],
+    text: `The boarding passes said Lisbon. Anthony had booked the flights forty minutes before they left the house, which was how he always did it, which was why Luisana kept a go-bag packed at all times, which was why Aaliyah had developed a stress response to the sound of her dad refreshing airline apps at weird hours.
 
-Sable Ashveil had not agreed.
+"It was a great deal," Anthony said, for the fourth time since the taxi. He had the look of a man who knew he was not going to stop saying this.
 
-She climbed by feel, her lantern shuttered against the wind, one hand on stone that breathed cold through her gloves. The stairs were wrong. She had known they would be wrong — crumbling in places, absent in others — but there was a particular wrongness to the way the darkness pooled at the center of each landing, as though something had been standing there very recently and had only just thought to leave.
+"It's fine," said Luisana, who had already identified three good coffee spots near the airport and was choosing between them mentally. "It's Lisbon. Lisbon is wonderful."
 
-At the seventh landing she stopped. The ember was real. She had told herself a dozen times on the road that it wouldn't be — that the fisherman who'd sold her the rumor had been drunk, or confused, or simply cruel in the way bored men could be. But there it sat in the hollow of the ancient hearthstone, no larger than a copper coin: a tongue of fire that cast no shadow and consumed nothing and had been burning, according to the oldest records she had found, since before the Accord.`
+Elijah was asleep across both their laps before the plane reached cruising altitude. Sully, improbably cleared for the cabin via a travel document Anthony had found on a forum and printed at a pharmacy, was also asleep, curled into Elijah's armpit like a small pastry. Aaliyah had both earbuds in — one earbud; she never used both — and was watching the flight tracker the way other people watched thrillers.
+
+The screen glitched.
+
+Not the whole screen. Just the little plane icon. It stuttered, reversed three seconds of its path, then continued forward as though nothing had happened. Aaliyah pulled out her earbud. She looked at the screen. She looked at it for a long time.
+
+"Dad," she said.
+
+"Hm."
+
+"Did you see that?"
+
+Anthony looked at the screen, which was now perfectly normal. "See what, mija?"
+
+Aaliyah looked at the little plane icon for another moment. Then she opened her notebook to a fresh page and drew a small, precise arrow pointing left. Below it, she wrote: it went backward.`
   },
   {
     day: 2,
     date: '2025-01-02',
-    chapterTitle: 'What the Warden Keeps',
+    chapterTitle: 'The Same Tuesday, Twice',
+    glitchName: 'The Lisbon Luncheon Loop (Confirmed)',
     imageUrl: '',
-    imageCaption: 'The Warden emerged from the shadows of the seventh landing.',
-    characters: ['Sable Ashveil', 'The Warden'],
-    text: `She heard it before she saw it: a sound like parchment tearing slowly in still air, a sound that had no business existing in a room with no paper and no wind. Then the shadows in the far corner rearranged themselves, and The Warden was there.
+    imageCaption: 'The same waiter. The same dropped fork. 12:47pm, again.',
+    characters: ['Anthony', 'Luisana', 'Aaliyah', 'Elijah', 'Sully 🐾'],
+    text: `The waiter dropped his fork at 12:47pm. Aaliyah noted the time.
 
-It was not tall, which surprised her. She had imagined something vast. Instead it stood at perhaps her own height, wrapped in the kind of darkness that was not an absence of light so much as a presence of something older than light. Its face, if she was looking at a face, held two points of pale luminescence that moved like eyes but tracked the ember more than they tracked her.
+At 12:47pm the next day — which the city appeared to believe was the same day — the waiter dropped his fork again. Same fork. Same sound. Same surprised expression, as though he had not spent the last twenty-four hours also dropping that fork.
 
-"You found it," it said. Its voice was the sound of stone settling deep underground, a vibration more felt than heard.
+"He keeps doing that," said Elijah, delighted.
 
-Sable kept her hand away from the knife at her hip. Not because she thought the knife would help — she had read enough to know it wouldn't — but because reaching for it would tell the creature something about her she wasn't ready to share. "I was looking for it," she said instead.
+"Eat your custard tart," said Luisana.
 
-"Most who come here are looking for it." Something shifted in the pale points of light that might have been amusement, or its opposite. "You are the first in eleven years to arrive before midnight. The ember shows itself to those with patience, or urgency. Which are you?"`
+Sully was staring at the far corner of the square with an intensity that didn't belong on a six-month-old puppy's face. Three short barks — quick, declarative — then silence. Elijah looked at him knowingly.
+
+"Small one," Elijah reported. "Sully says small one."
+
+"Sully says 'I am a puppy and I saw a pigeon,'" said Aaliyah, but she wrote it down anyway. Small one. 12:47pm. Near the fork waiter.
+
+Her map was taking shape. She didn't know yet what it was a map of. That felt important — the not-knowing. Like when you were reading a book and you could feel the plot gathering itself in the pages ahead, dense and inevitable, and the characters were still cheerfully eating lunch.
+
+Anthony was cheerfully eating lunch. He had also befriended the fork waiter, whose name was Tomás and whose cousin, it turned out, had a restaurant in the Alfama district that was not in any app, and they were going there tonight.
+
+The city looped. The fork fell. Aaliyah drew a small circle on her map and labeled it: here.`
   }
 ];
 
@@ -552,19 +693,18 @@ let allPages = [];
 let currentIndex = 0;
 
 // ─────────────────────────────────────────────
-// FETCH pages index from GitHub
+// LOAD pages from GitHub or fall back to sample
 // ─────────────────────────────────────────────
 async function loadPages() {
   document.getElementById('story-title').textContent = CONFIG.storyTitle;
+  document.getElementById('story-title').dataset.text = CONFIG.storyTitle;
   document.getElementById('story-tagline').textContent = CONFIG.storyTagline;
 
-  // Try to load real index from GitHub
   const indexUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/index.json`;
   try {
     const resp = await fetch(indexUrl);
     if (resp.ok) {
       const index = await resp.json();
-      // Load each page file
       const pagePromises = index.pages.map(async (ref) => {
         const pageUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/${ref.file}`;
         const pr = await fetch(pageUrl);
@@ -573,88 +713,77 @@ async function loadPages() {
       const loaded = (await Promise.all(pagePromises)).filter(Boolean);
       allPages = loaded.sort((a, b) => a.day - b.day);
     }
-  } catch(e) {
-    // Fall through to sample
-  }
+  } catch(e) {}
 
-  // Fall back to sample data if nothing loaded
-  if (allPages.length === 0) {
-    allPages = SAMPLE_PAGES;
-  }
+  if (allPages.length === 0) allPages = SAMPLE_PAGES;
 
-  currentIndex = allPages.length - 1; // Show latest page by default
+  currentIndex = allPages.length - 1;
   renderPage(currentIndex);
-  renderScrollNav();
+  renderTimeline();
 }
 
 // ─────────────────────────────────────────────
-// RENDER a page
+// RENDER
 // ─────────────────────────────────────────────
 function renderPage(idx) {
   const page = allPages[idx];
-  const content = document.getElementById('page-content');
+  const el = document.getElementById('page-content');
 
-  const dateStr = page.date ? new Date(page.date + 'T12:00:00').toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '';
-
-  const imageHtml = page.imageUrl
-    ? `<div class="illustration-wrap">
-        <div class="illustration-frame">
-          <img src="${page.imageUrl}" alt="${page.imageCaption || ''}" loading="lazy">
-        </div>
-        ${page.imageCaption ? `<p class="illustration-caption">${page.imageCaption}</p>` : ''}
-       </div>`
-    : `<div class="illustration-wrap">
-        <div class="illustration-frame">
-          <div class="illustration-placeholder">
-            <div style="font-size:32px;opacity:0.4">🌙</div>
-            <div>Illustration forthcoming</div>
-          </div>
-        </div>
-        ${page.imageCaption ? `<p class="illustration-caption">${page.imageCaption}</p>` : ''}
-       </div>`;
-
-  const charactersHtml = page.characters && page.characters.length
-    ? `<div class="characters-section">
-        <div class="section-label">Characters in this page</div>
-        <div class="characters-grid">
-          ${page.characters.map(c => `<div class="character-chip">${c}</div>`).join('')}
-        </div>
-       </div>`
+  const dateStr = page.date
+    ? new Date(page.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
     : '';
 
-  const paragraphs = (page.text || '').split(/\n\n+/).filter(Boolean)
+  const imageHtml = page.imageUrl
+    ? `<div class="illustration-zone"><img src="${page.imageUrl}" alt="${page.imageCaption || ''}"></div>`
+    : `<div class="illustration-zone">
+        <div class="illustration-placeholder">
+          <div class="icon">🌀</div>
+          <div>Illustration generating…</div>
+        </div>
+       </div>`;
+
+  const captionHtml = page.imageCaption
+    ? `<p class="illustration-caption">${page.imageCaption}</p>` : '';
+
+  const glitchHtml = page.glitchName
+    ? `<div class="glitch-tag">${page.glitchName}</div>` : '';
+
+  const chipsHtml = (page.characters || []).map(c =>
+    `<span class="chip${c.includes('🐾') ? ' sully' : ''}">${c}</span>`
+  ).join('');
+
+  const bodyHtml = (page.text || '').split(/\n\n+/).filter(Boolean)
     .map(p => `<p>${p.trim()}</p>`).join('');
 
-  content.innerHTML = `
-    <div class="page-reveal">
-      <div class="chapter-header">
-        <div class="chapter-number">Day ${page.day} &nbsp;·&nbsp; Chapter ${idx + 1}</div>
-        <h2 class="chapter-title">${page.chapterTitle || 'Untitled'}</h2>
-        ${dateStr ? `<div class="chapter-date">${dateStr}</div>` : ''}
+  el.innerHTML = `<div class="page-reveal">
+    <div class="day-header">
+      <div>
+        <div class="day-badge">
+          <span class="day-number">DAY ${page.day}</span>
+          <span class="day-date">${dateStr}</span>
+        </div>
+        <div class="chapter-title-wrap"><h2>${page.chapterTitle || 'Untitled'}</h2></div>
       </div>
+    </div>
+    ${imageHtml}
+    ${captionHtml}
+    ${glitchHtml}
+    <div class="story-body">${bodyHtml}</div>
+    <div class="characters-row">
+      <div class="characters-label">In this page</div>
+      <div class="character-chips">${chipsHtml}</div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="navigate(-1)" ${idx===0?'disabled':''}>← Prev</button>
+      <span class="page-indicator">Page ${idx+1} of ${allPages.length}</span>
+      <button class="nav-btn" onclick="navigate(1)" ${idx===allPages.length-1?'disabled':''}>Next →</button>
+    </div>
+  </div>`;
 
-      ${imageHtml}
-
-      <div class="ornament">✦ ✦ ✦</div>
-
-      <div class="story-body">${paragraphs}</div>
-
-      ${charactersHtml}
-
-      <div class="page-nav">
-        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" ${idx === 0 ? 'disabled' : ''}>← Previous</button>
-        <div class="page-indicator">Page ${idx + 1} of ${allPages.length}</div>
-        <button class="nav-btn" id="btn-next" onclick="navigate(1)" ${idx === allPages.length - 1 ? 'disabled' : ''}>Next →</button>
-      </div>
-    </div>`;
-
-  updateScrollThumb();
+  updateTimeline();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ─────────────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────────────
 function navigate(dir) {
   const next = currentIndex + dir;
   if (next < 0 || next >= allPages.length) return;
@@ -663,42 +792,35 @@ function navigate(dir) {
 }
 
 // ─────────────────────────────────────────────
-// SCROLL NAV
+// TIMELINE
 // ─────────────────────────────────────────────
-function renderScrollNav() {
+function renderTimeline() {
   if (allPages.length <= 1) return;
-  const nav = document.getElementById('scroll-nav');
-  nav.style.display = 'block';
-  document.getElementById('scroll-end-label').textContent = `Day ${allPages[allPages.length-1].day}`;
-  updateScrollThumb();
+  document.getElementById('timeline-wrap').style.display = 'block';
+  document.getElementById('timeline-end').textContent = `Day ${allPages[allPages.length-1].day}`;
+  updateTimeline();
+
+  document.getElementById('timeline-track').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    currentIndex = Math.round(pct * (allPages.length - 1));
+    renderPage(currentIndex);
+  });
 }
 
-function updateScrollThumb() {
+function updateTimeline() {
   if (allPages.length <= 1) return;
-  const pct = allPages.length > 1 ? (currentIndex / (allPages.length - 1)) * 100 : 0;
-  document.getElementById('scroll-fill').style.width = pct + '%';
-  document.getElementById('scroll-thumb').style.left = pct + '%';
+  const pct = (currentIndex / (allPages.length - 1)) * 100;
+  document.getElementById('timeline-fill').style.width = pct + '%';
+  document.getElementById('timeline-thumb').style.left = pct + '%';
 }
 
-// Click on scroll track to jump
-document.getElementById('scroll-nav')?.addEventListener('click', function(e) {
-  const track = document.getElementById('scroll-fill').parentElement;
-  const rect = track.getBoundingClientRect();
-  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  const idx = Math.round(pct * (allPages.length - 1));
-  currentIndex = idx;
-  renderPage(currentIndex);
-});
-
-// Keyboard navigation
-document.addEventListener('keydown', (e) => {
+// Keyboard
+document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  navigate(-1);
   if (e.key === 'ArrowRight') navigate(1);
 });
 
-// ─────────────────────────────────────────────
-// BOOT
-// ─────────────────────────────────────────────
 loadPages();
 </script>
 </body>

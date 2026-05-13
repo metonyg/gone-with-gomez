@@ -1,6 +1,6 @@
 {
-  "storyTitle": "The Chronicles of Aevermore",
-  "storyTagline": "A tale written one day at a time",
+  "storyTitle": "The Gomez Glitch",
+  "storyTagline": "Somewhere between yesterday and tomorrow, a family finds the way home.",
   "pages": [
     { "day": 1, "file": "day-001.json" }
   ]
