@@ -69,6 +69,43 @@ function buildCharacterRef(bible) {
     .join("\n");
 }
 
+/** Normalize character names so page output can match first names and nicknames */
+function normalizeCharacterName(name) {
+  return String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+/** Build name variants for matching Claude's page character list to bible entries */
+function characterAliases(character) {
+  const aliases = [character.name, character.name.split(" ")[0]];
+
+  if (character.nickname) {
+    const nickname = character.nickname.split(/[—-]/)[0].trim();
+    aliases.push(nickname);
+  }
+
+  return aliases.map(normalizeCharacterName).filter(Boolean);
+}
+
+/** Build the character description block for image generation */
+function buildImageCharacterPrompt(bible, pageCharacters = []) {
+  const pageCharacterNames = pageCharacters.map(normalizeCharacterName).filter(Boolean);
+  const selectedCharacters = pageCharacterNames.length
+    ? bible.characters.filter((character) => {
+        const aliases = characterAliases(character);
+        return pageCharacterNames.some((pageName) => aliases.includes(pageName));
+      })
+    : bible.characters;
+
+  const charactersForPrompt = selectedCharacters.length ? selectedCharacters : bible.characters;
+
+  return charactersForPrompt
+    .map((character) => `${character.name}: ${character.imagePrompt || character.appearance}`)
+    .join("; ");
+}
+
 /** Build the full generation prompt */
 function buildPrompt(bible, index, dayNumber) {
   const recentText = loadRecentPages(index, 3);
@@ -152,7 +189,8 @@ async function generateImage(bible, page) {
 
   // Build image prompt from caption + style
   const styleGuide = bible.imageStyle;
-  const prompt = `${page.imageCaption}. The Gomez family: Anthony (broad-shouldered Latino man, 40s, Hawaiian shirt, camera bag), Lulu (Latina woman, 39, dark curly hair in bun with pen, tote bags), Aaliyah (13-year-old Black and Latina girl, two curly puffs, one earbud, sticker-covered tablet), Elijah (7-year-old Latino boy, round cheeks, gravity-defying curls), Sully (fluffy Cavachon puppy, brown-and-white). ${styleGuide}. Vibrant, thick outlines, warm saturated colors, expressive animated film style.`;
+  const characterPrompt = buildImageCharacterPrompt(bible, page.characters);
+  const prompt = `${page.imageCaption}. Character reference descriptions: ${characterPrompt}. ${styleGuide}. Keep the characters visually consistent with these descriptions across every illustration.`;
 
   const negativePrompt =
     "realistic, photograph, dark, gloomy, horror, violence, text, watermark, blurry";
