@@ -1,0 +1,100 @@
+# ═══════════════════════════════════════════════════════════════
+#  THE GOMEZ GLITCH — Daily Story Generation Workflow
+#  Runs every morning at 8:00 AM Eastern (12:00 UTC)
+#  Generates a new page, commits it, and deploys to GitHub Pages
+# ═══════════════════════════════════════════════════════════════
+
+name: Daily Story Generation
+
+on:
+  # Run every day at 8:00 AM Eastern Time (UTC-4 in summer, UTC-5 in winter)
+  # Set to 12:00 UTC to reliably hit ~8am ET year-round
+  schedule:
+    - cron: "0 12 * * *"
+
+  # Allow manual trigger from the GitHub Actions tab (useful for testing)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run — generate but do not commit"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  generate-page:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to commit new files back to repo
+
+    steps:
+      # ── 1. Check out the full repo ──────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history so git log works
+
+      # ── 2. Set up Node.js ───────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # ── 3. Install dependencies ─────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Run the generator ────────────────────────────────
+      - name: Generate today's page
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node scripts/generate.js
+
+      # ── 5. Commit and push (unless dry run) ─────────────────
+      - name: Commit new page
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true' }}
+        run: |
+          git config user.name "Gomez Glitch Bot"
+          git config user.email "actions@github.com"
+
+          # Stage all new/modified files in pages/ and story-bible.json
+          git add pages/
+          git add story-bible.json
+
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+            exit 0
+          fi
+
+          # Get today's day number from index for the commit message
+          DAY=$(node -e "
+            const idx = JSON.parse(require('fs').readFileSync('pages/index.json','utf8'));
+            console.log(idx.pages.length);
+          ")
+
+          # Get the chapter title for a nice commit message
+          TITLE=$(node -e "
+            const idx = JSON.parse(require('fs').readFileSync('pages/index.json','utf8'));
+            const last = idx.pages[idx.pages.length - 1];
+            const page = JSON.parse(require('fs').readFileSync('pages/' + last.file, 'utf8'));
+            console.log(page.chapterTitle);
+          ")
+
+          git commit -m "📖 Day \${DAY}: \${TITLE}"
+          git push
+
+      # ── 6. Log dry run output ────────────────────────────────
+      - name: Dry run — show generated files
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "=== DRY RUN: files that would be committed ==="
+          git status
+          echo ""
+          echo "=== Latest page JSON ==="
+          LAST=$(ls pages/day-*.json | sort | tail -1)
+          cat "$LAST"

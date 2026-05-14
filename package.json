@@ -1,0 +1,18 @@
+{
+  "name": "gomez-glitch-generator",
+  "version": "1.0.0",
+  "description": "Daily story generator for The Gomez Glitch",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate.js",
+    "test": "node scripts/test-run.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@huggingface/inference": "^4.13.15",
+    "dotenv": "^17.4.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

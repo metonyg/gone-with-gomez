@@ -231,14 +231,13 @@
   /* ── ILLUSTRATION ── */
   .illustration-zone {
     position: relative;
-    overflow: hidden;
-    max-height: 420px;
+    overflow: visible;
     background: var(--bg);
   }
 
   .illustration-zone img {
     width: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
     filter: saturate(1.1);
   }
@@ -615,11 +614,11 @@
 // CONFIG — update these after creating your repo
 // ─────────────────────────────────────────────
 const CONFIG = {
-  repoOwner:   'YOUR_GITHUB_USERNAME',
-  repoName:    'YOUR_REPO_NAME',
+  repoOwner:   'metonyg',
+  repoName:    'gone-with-gomez',
   branch:      'main',
   storyTitle:  'The Gomez Glitch',
-  storyTagline:'Somewhere between yesterday and tomorrow, a family finds the way home.',
+  storyTagline:'Somewhere between yesterday and tomorrow, a family finds the way home — and it\'s shaped like an island.',
 };
 
 // ─────────────────────────────────────────────
@@ -695,25 +694,38 @@ let currentIndex = 0;
 // ─────────────────────────────────────────────
 // LOAD pages from GitHub or fall back to sample
 // ─────────────────────────────────────────────
+async function loadPagesFromSource(indexUrl, pageBaseUrl) {
+  const resp = await fetch(indexUrl);
+  if (!resp.ok) return [];
+
+  const index = await resp.json();
+  const pagePromises = index.pages.map(async (ref) => {
+    const pr = await fetch(`${pageBaseUrl}${ref.file}`);
+    return pr.ok ? pr.json() : null;
+  });
+
+  return (await Promise.all(pagePromises))
+    .filter(Boolean)
+    .sort((a, b) => a.day - b.day);
+}
+
 async function loadPages() {
   document.getElementById('story-title').textContent = CONFIG.storyTitle;
   document.getElementById('story-title').dataset.text = CONFIG.storyTitle;
   document.getElementById('story-tagline').textContent = CONFIG.storyTagline;
 
-  const indexUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/index.json`;
-  try {
-    const resp = await fetch(indexUrl);
-    if (resp.ok) {
-      const index = await resp.json();
-      const pagePromises = index.pages.map(async (ref) => {
-        const pageUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/${ref.file}`;
-        const pr = await fetch(pageUrl);
-        return pr.ok ? pr.json() : null;
-      });
-      const loaded = (await Promise.all(pagePromises)).filter(Boolean);
-      allPages = loaded.sort((a, b) => a.day - b.day);
-    }
-  } catch(e) {}
+  const remoteBaseUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/`;
+  const sources = [
+    { indexUrl: 'pages/index.json', pageBaseUrl: 'pages/' },
+    { indexUrl: `${remoteBaseUrl}index.json`, pageBaseUrl: remoteBaseUrl },
+  ];
+
+  for (const source of sources) {
+    try {
+      allPages = await loadPagesFromSource(source.indexUrl, source.pageBaseUrl);
+      if (allPages.length > 0) break;
+    } catch(e) {}
+  }
 
   if (allPages.length === 0) allPages = SAMPLE_PAGES;
 

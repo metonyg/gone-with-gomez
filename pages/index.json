@@ -1,0 +1,10 @@
+{
+  "storyTitle": "The Gomez Glitch",
+  "storyTagline": "Somewhere between yesterday and tomorrow, a family finds the way home — and it's shaped like an island.",
+  "pages": [
+    {
+      "day": 1,
+      "file": "day-001.json"
+    }
+  ]
+}

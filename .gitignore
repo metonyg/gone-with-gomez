@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Local environment — NEVER commit your API keys
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

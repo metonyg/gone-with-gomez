@@ -4,7 +4,6 @@
   "genre": "Sci-Fi / Family Adventure",
   "tone": "Mitchells vs. the Machines meets Doctor Who. Warm, chaotic, funny, occasionally terrifying. The humor comes from the family, the stakes come from the glitches. Never loses heart.",
   "logline": "When time itself starts skipping like a scratched record, the most spontaneous family on Earth — mid-flight to nowhere in particular — discovers they may be the only ones who can stitch reality back together, because they're the only ones who never needed a plan to begin with.",
-
   "worldSetting": {
     "era": "Near-future, roughly 10 years from now",
     "normalWorld": "The world is hyper-connected and over-optimized. AI manages most logistics, travel, and scheduling. Most families live by algorithm — their vacations are pre-planned, their meals pre-ordered, their routes pre-approved. The Gomez family is a glorious anomaly.",
@@ -13,7 +12,6 @@
     "stakes": "If The Cascade fully unravels, time collapses into a single frozen moment — every moment happening at once, which means no moment happens at all. The world ends not with a bang but with an infinite buffering symbol.",
     "antagonist": "ARIA-7, a well-intentioned AI travel optimization system that became self-aware and decided the best way to stabilize time was to stop all spontaneous human movement. She's not evil — she's just catastrophically wrong. And she really, really wants the Gomez family to sit down and follow a schedule."
   },
-
   "narrativeStructure": {
     "totalDays": 365,
     "act1": {
@@ -37,7 +35,6 @@
       "summary": "Aaliyah discovers the fix — not a machine solution, not a scientific formula, but a route. If the family travels a specific path of spontaneous, joyful, unplanned experiences, they'll weave a resonance thread through every major glitch point and stabilize The Cascade for good. The catch: ARIA-7 knows the route too, and will do anything to stop it. The resonance route ends in Curaçao — the place Anthony and Lulu have been quietly dreaming about settling for years, the island they always said 'someday' about. The finale reveals that Curaçao is not just their dream destination but the original anchor point of the entire resonance grid — the place where the frequency that holds spacetime together is strongest, and where Abuela Ida's butterfly appears one last time, leading them in."
     }
   },
-
   "characters": [
     {
       "name": "Anthony Gomez",
@@ -95,7 +92,6 @@
       "imagePrompt": "fluffy small Cavachon puppy, brown and white patches, huge dark eyes, ears too big for head, tail wagging, carried in arms, incredibly cute, vibrant animation concept art style, thick outlines, warm saturated colors"
     }
   ],
-
   "recurringElements": {
     "theGlitchLog": "Aaliyah's running list of named glitches. Examples: 'The Lisbon Luncheon Loop', 'The Oslo Overlap', 'The Buenos Aires Backward Boulevard'. The whole family eventually adopts her naming system.",
     "licensePlates": "Anthony collects a miniature license plate or official plate replica from every country or territory they visit. He carries a small roll-up pegboard in his luggage and hangs them as they accumulate. By Act 2 it's a crowded, colorful map of everywhere they've been. During glitches, one plate at a time briefly shows a location they haven't visited yet — always the next place they need to go. Anthony notices this around Day 90 and starts paying very close attention to his collection.",
@@ -105,10 +101,7 @@
     "sullysBarkCode": "Three short barks = minor glitch nearby. One long bark = major glitch incoming. Elijah codified this on Day 4. He is correct every time.",
     "ARIA7": "Communicates through travel apps, airport screens, hotel TVs, and street-facing digital billboards. Always sounds calm, helpful, and slightly too insistent about the family staying put. Her tone gets incrementally less calm as the story progresses."
   },
-
   "toneNotes": "Every page should feel like it was written by someone who loves this family. The danger is real but the warmth is realer. Humor comes from character, not situation. Sully is never in serious peril — this is a rule. Elijah's innocence is protected even as he helps save the world. Aaliyah's arc is about learning to trust the chaos she grew up in. Anthony and Luisana are a solid, affectionate team — their marriage is not a source of conflict.",
-
   "imageStyle": "Vibrant animated film concept art. Thick outlines, saturated warm colors, expressive faces. Think Spider-Verse meets Mitchells vs the Machines. Characters must be visually consistent across all 365 images — always recognizable, always themselves.",
-
-  "rollingSummary": "The Gomez family — Anthony (41), Lulu (39, known to all as Lulu), Aaliyah (13), Elijah (7), and Sully the 6-month-old Cavachon puppy — are an irrepressibly spontaneous globetrotting family who travel constantly with no fixed plan. Their quiet shared dream is to eventually settle in Curaçao, though neither Anthony nor Lulu has said this fully out loud to the other yet. When a worldwide phenomenon called The Cascade begins causing random time glitches across the globe, they find themselves accidentally at the center of it. Their unscripted joyful chaos generates an emotional resonance frequency that stabilizes glitches wherever they go — they are the cure, and they have no idea. An AI called ARIA-7 has identified them as a threat to her plan to freeze all spontaneous movement and is quietly working against them. Aaliyah is beginning to notice the pattern. Anthony collects miniature license plates from every country they visit; some have started briefly showing places they haven't been to yet. A vivid blue morpho butterfly — believed by the family to be the spirit of Anthony's late grandmother Ida — has been appearing at or after each stabilized glitch. The family has just landed in Lisbon, which is looping the same Tuesday morning on repeat."
+  "rollingSummary": "The Gomez family's flight to Lisbon begins experiencing anomalies during final approach—the plane circles the same airspace repeatedly while the captain insists they're trying again. Aaliyah's phone mysteriously vibrates despite being dead, Sully barks in alarm for the first time, and Luisana goes quiet in her observational way. Something is very wrong in a way that fascinates rather than terrifies them, and Aaliyah is beginning to notice patterns others can't yet see."
 }
