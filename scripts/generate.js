@@ -2,12 +2,16 @@
 //  THE GOMEZ GLITCH — Daily Story Generator
 //  Reads the story bible + page history, generates a new page
 //  via Claude API, requests an illustration via Hugging Face,
+//  optionally synthesizes narration via Google Cloud Text-to-Speech,
 //  then writes the result to /pages/day-NNN.json
 // ═══════════════════════════════════════════════════════════════
 
 import Anthropic from "@anthropic-ai/sdk";
+import { TextToSpeechClient } from "@google-cloud/text-to-speech";
 import { InferenceClient } from "@huggingface/inference";
+import { execFileSync } from "child_process";
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -20,6 +24,9 @@ const MAX_TOKENS = 3000; // enough room for 600-900 words plus JSON fields
 const PAGES_DIR = path.join(ROOT, "pages");
 const BIBLE_PATH = path.join(ROOT, "story-bible.json");
 const INDEX_PATH = path.join(PAGES_DIR, "index.json");
+
+const TTS_MAX_CHUNK_BYTES = 4500;
+const DEFAULT_TTS_VOICE = "en-US-Neural2-F";
 
 // ─── CLIENTS ───────────────────────────────────────────────────
 const anthropic = new Anthropic({
@@ -227,6 +234,191 @@ async function generateImage(bible, page) {
   }
 }
 
+/** UTF-8 byte length for Cloud TTS input limits */
+function utf8ByteLength(s) {
+  return Buffer.byteLength(s, "utf8");
+}
+
+/** Strip light markdown / tighten whitespace for speech */
+function normalizeTextForSpeech(text) {
+  return String(text || "")
+    .replace(/\*+([^*]*)\*+/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Full plain text read aloud for one page */
+function buildSpeechPlainText(page) {
+  const day = page.day ?? "";
+  const title = normalizeTextForSpeech(page.chapterTitle || "");
+  const paras = (page.text || "")
+    .split(/\n\n+/)
+    .map((p) => normalizeTextForSpeech(p))
+    .filter(Boolean);
+  const body = paras.join("\n\n");
+  return `Day ${day}. ${title}.\n\n${body}`.trim();
+}
+
+/** Split a string into segments each at most maxBytes UTF-8 */
+function splitStringToMaxUtf8Bytes(str, maxBytes) {
+  const parts = [];
+  let rest = str;
+  while (rest.length > 0) {
+    if (utf8ByteLength(rest) <= maxBytes) {
+      parts.push(rest);
+      break;
+    }
+    let lo = 0;
+    let hi = rest.length;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      if (utf8ByteLength(rest.slice(0, mid)) <= maxBytes) lo = mid;
+      else hi = mid - 1;
+    }
+    let cut = lo;
+    if (cut === 0) {
+      cut = 1;
+      while (cut < rest.length && utf8ByteLength(rest.slice(0, cut + 1)) <= maxBytes) cut++;
+    }
+    parts.push(rest.slice(0, cut));
+    rest = rest.slice(cut);
+  }
+  return parts;
+}
+
+/** Build TTS request chunks under the API byte limit */
+function buildTtsChunks(fullText, maxBytes = TTS_MAX_CHUNK_BYTES) {
+  const trimmed = fullText.trim();
+  if (!trimmed) return [];
+
+  const paragraphs = trimmed.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
+  const expanded = [];
+  for (const p of paragraphs) {
+    if (utf8ByteLength(p) <= maxBytes) expanded.push(p);
+    else expanded.push(...splitStringToMaxUtf8Bytes(p, maxBytes));
+  }
+
+  const chunks = [];
+  let buf = "";
+  for (const p of expanded) {
+    const candidate = buf ? `${buf}\n\n${p}` : p;
+    if (utf8ByteLength(candidate) <= maxBytes) buf = candidate;
+    else {
+      if (buf) chunks.push(buf);
+      buf = p;
+    }
+  }
+  if (buf) chunks.push(buf);
+  return chunks;
+}
+
+function languageCodeFromVoiceName(voiceName) {
+  const m = /^([a-z]{2}-[A-Z]{2})/.exec(voiceName);
+  return m ? m[1] : "en-US";
+}
+
+function createTtsClient() {
+  const rawJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  if (rawJson && rawJson.trim()) {
+    try {
+      const credentials = JSON.parse(rawJson);
+      return new TextToSpeechClient({ credentials });
+    } catch {
+      console.error("⚠️  GOOGLE_SERVICE_ACCOUNT_JSON is set but not valid JSON — skipping TTS");
+      return null;
+    }
+  }
+  const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (keyPath && fs.existsSync(keyPath)) {
+    return new TextToSpeechClient({ keyFilename: keyPath });
+  }
+  return null;
+}
+
+function mergeMp3WithFfmpeg(tmpDir, partPaths, outPath) {
+  const listFile = path.join(tmpDir, "concat.txt");
+  const body = partPaths
+    .map((p) => {
+      const name = path.basename(p);
+      return `file '${name.replace(/'/g, "'\\''")}'`;
+    })
+    .join("\n");
+  fs.writeFileSync(listFile, body, "utf8");
+  execFileSync(
+    "ffmpeg",
+    ["-y", "-f", "concat", "-safe", "0", "-i", "concat.txt", "-c", "copy", path.resolve(outPath)],
+    { cwd: tmpDir, stdio: "pipe" }
+  );
+}
+
+/**
+ * Synthesize page audio; returns relative URL or "".
+ * Requires ffmpeg on PATH when the text splits into multiple chunks.
+ */
+async function synthesizePageAudio(page, dayNumber) {
+  const client = createTtsClient();
+  if (!client) {
+    console.log("⚠️  No Google TTS credentials — skipping narration");
+    return "";
+  }
+
+  const speechText = buildSpeechPlainText(page);
+  const chunks = buildTtsChunks(speechText);
+  if (chunks.length === 0) {
+    console.log("⚠️  No speech text — skipping TTS");
+    return "";
+  }
+
+  const voiceName = process.env.GOOGLE_TTS_VOICE || DEFAULT_TTS_VOICE;
+  const languageCode = languageCodeFromVoiceName(voiceName);
+
+  const audioDir = path.join(PAGES_DIR, "audio");
+  if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+
+  const outFile = path.join(audioDir, `day-${pad(dayNumber)}.mp3`);
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gomez-tts-chunks-"));
+  const partPaths = [];
+
+  try {
+    for (let i = 0; i < chunks.length; i++) {
+      const [response] = await client.synthesizeSpeech({
+        input: { text: chunks[i] },
+        voice: { languageCode, name: voiceName },
+        audioConfig: { audioEncoding: "MP3" },
+      });
+      const content = response.audioContent;
+      if (!content || !content.length) {
+        throw new Error("Empty audioContent from Google TTS");
+      }
+      const partPath = path.join(tmpDir, `part-${i}.mp3`);
+      fs.writeFileSync(partPath, content);
+      partPaths.push(partPath);
+    }
+
+    if (partPaths.length === 1) {
+      fs.copyFileSync(partPaths[0], outFile);
+    } else {
+      try {
+        mergeMp3WithFfmpeg(tmpDir, partPaths, outFile);
+      } catch (err) {
+        console.error(
+          "TTS: ffmpeg concat failed (install ffmpeg for long pages):",
+          err.message
+        );
+        return "";
+      }
+    }
+
+    console.log(`🔊 Narration saved: ${outFile}`);
+    return `pages/audio/day-${pad(dayNumber)}.mp3`;
+  } catch (err) {
+    console.error("Text-to-speech failed:", err.message);
+    return "";
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+}
+
 /** Update the rolling summary in the story bible */
 function updateBibleSummary(newSummary) {
   const bible = loadJSON(BIBLE_PATH);
@@ -319,25 +511,31 @@ async function main() {
   const imageUrl = await generateImage(bible, page);
   page.imageUrl = imageUrl;
 
-  // 7. Save the page JSON
+  // 7. Narration (Google Cloud TTS)
+  console.log("🔊 Synthesizing narration...");
+  const audioUrl = await synthesizePageAudio(page, dayNumber);
+
+  // 8. Save the page JSON
   const pageFile = path.join(PAGES_DIR, `day-${pad(dayNumber)}.json`);
   const pageToSave = { ...page };
   delete pageToSave.summaryUpdate; // don't store this in the page file
+  if (audioUrl) pageToSave.audioUrl = audioUrl;
   fs.writeFileSync(pageFile, JSON.stringify(pageToSave, null, 2));
   console.log(`💾 Page saved: ${pageFile}`);
 
-  // 8. Update story bible rolling summary
+  // 9. Update story bible rolling summary
   if (page.summaryUpdate) {
     updateBibleSummary(page.summaryUpdate);
   }
 
-  // 9. Update pages index
+  // 10. Update pages index
   updateIndex(index, dayNumber);
 
   console.log(`\n✅ Day ${dayNumber} complete!`);
   console.log(`   Title: "${page.chapterTitle}"`);
   console.log(`   Characters: ${(page.characters || []).join(", ")}`);
   console.log(`   Image: ${imageUrl || "(none)"}`);
+  console.log(`   Audio: ${audioUrl || "(none)"}`);
 }
 
 main().catch((err) => {

@@ -25,8 +25,10 @@ The story is called **"The Gomez Glitch"** — a warm, funny, Mitchells vs. the 
 ├── pages/
 │   ├── index.json                    # Manifest of all published pages
 │   ├── day-001.json                  # First page (and so on)
-│   └── images/
-│       └── day-001.jpg               # AI-generated illustration per page
+│   ├── images/
+│   │   └── day-001.jpg               # AI-generated illustration per page
+│   └── audio/
+│       └── day-001.mp3               # Optional Google TTS narration per page
 │
 ├── scripts/
 │   ├── generate.js                   # Main daily generation script
@@ -50,6 +52,7 @@ The story is called **"The Gomez Glitch"** — a warm, funny, Mitchells vs. the 
 | Automation | GitHub Actions cron (`0 12 * * *`) | Free (2000 min/mo) |
 | Frontend | Vanilla HTML/CSS/JS — no framework | Free |
 | Runtime | Node.js 20+, ES Modules (`"type": "module"`) | Free |
+| Page audio | Google Cloud Text-to-Speech (pre-generated MP3 in CI) | Pay-as-you-go |
 
 ---
 
@@ -60,9 +63,11 @@ ANTHROPIC_API_KEY=sk-ant-...   # from console.anthropic.com
 HF_TOKEN=hf_...                # from huggingface.co/settings/tokens (read access)
 ```
 
+Optional narration (Google Cloud TTS): set `GOOGLE_APPLICATION_CREDENTIALS` to a service-account JSON path locally, or set `GOOGLE_SERVICE_ACCOUNT_JSON` to the raw JSON (used in Actions). Enable **Cloud Text-to-Speech API** in GCP and grant the account **Cloud Text-to-Speech User**. Long pages need **ffmpeg** installed to stitch MP3 chunks. Optional: `GOOGLE_TTS_VOICE` (default `en-US-Neural2-F`).
+
 For local dev: copy `.env.example` to `.env` and fill in keys, then use `dotenv` to load them (already configured in `test-run.js`).
 
-For GitHub Actions: add both as **repository secrets** under Settings → Secrets and variables → Actions.
+For GitHub Actions: add `ANTHROPIC_API_KEY` and `HF_TOKEN` as **repository secrets**. For audio, add **`GOOGLE_SERVICE_ACCOUNT_JSON`** (full service account JSON) under the same place.
 
 ---
 
@@ -82,9 +87,10 @@ For GitHub Actions: add both as **repository secrets** under Settings → Secret
 4. **Call Claude API** (`claude-haiku-4-5-20251001`, max 3000 tokens)
 5. **Parse JSON response** — Claude returns structured data, not prose
 6. **Call Hugging Face** FLUX.1-schnell through `@huggingface/inference` for illustration image
-7. **Save** `pages/day-NNN.json` with story content
-8. **Update** `story-bible.json` rolling summary with today's summary update
-9. **Update** `pages/index.json` manifest
+7. **Optionally call Google Cloud Text-to-Speech** (if credentials are set) to write `pages/audio/day-NNN.mp3` and set `audioUrl` on the page JSON
+8. **Save** `pages/day-NNN.json` with story content
+9. **Update** `story-bible.json` rolling summary with today's summary update
+10. **Update** `pages/index.json` manifest
 
 ### Claude response schema (what the model returns)
 
@@ -293,8 +299,8 @@ const CONFIG = {
   - Step 6: Validate image generation consistency across pages
   - Step 7: Launch — commit everything, enable GitHub Pages, confirm first automated run
 
-- **Nice-to-haves not yet implemented:**
-  - Character detail modal when clicking character chips
+- **Nice-to-haves:**
+  - Character detail modal when clicking character chips — implemented in `index.html`
   - Search/filter pages by character or glitch name
   - RSS feed for subscribers
   - Social share card per page (og:image)

@@ -361,6 +361,8 @@
   }
 
   .chip {
+    appearance: none;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     font-weight: 500;
     padding: 6px 14px;
@@ -368,20 +370,149 @@
     border: 1px solid var(--border);
     color: var(--text-muted);
     background: var(--bg2);
-    cursor: default;
+    cursor: pointer;
     transition: all 0.2s;
   }
 
-  .chip:hover {
+  .chip:hover,
+  .chip:focus-visible {
     border-color: var(--purple);
     color: var(--text);
     background: rgba(155,93,229,0.1);
+    outline: none;
+    transform: translateY(-1px);
   }
 
   .chip.sully {
     border-color: rgba(255,209,102,0.4);
     color: var(--accent2);
     background: rgba(255,209,102,0.05);
+  }
+
+  /* ── CHARACTER MODAL ── */
+  body.modal-open { overflow: hidden; }
+
+  .character-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(7,10,20,0.78);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .character-modal-backdrop.active {
+    display: flex;
+  }
+
+  .character-modal {
+    width: min(640px, 100%);
+    max-height: min(760px, 90vh);
+    overflow: auto;
+    background:
+      linear-gradient(145deg, rgba(155,93,229,0.14), transparent 38%),
+      var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow:
+      0 28px 80px rgba(0,0,0,0.65),
+      0 0 0 1px rgba(255,209,102,0.08);
+    animation: modalIn 0.22s ease both;
+  }
+
+  .character-modal-header {
+    position: relative;
+    padding: 28px 32px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .character-modal-kicker {
+    display: inline-flex;
+    margin-bottom: 10px;
+    color: var(--cyan);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .character-modal h2 {
+    padding-right: 44px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(24px, 5vw, 36px);
+    line-height: 1.1;
+  }
+
+  .character-modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .character-modal-pill {
+    padding: 5px 10px;
+    border: 1px solid rgba(255,209,102,0.24);
+    border-radius: 999px;
+    background: rgba(255,209,102,0.06);
+    color: var(--accent2);
+    font-size: 12px;
+  }
+
+  .character-modal-close {
+    appearance: none;
+    position: absolute;
+    top: 22px;
+    right: 24px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg2);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    transition: all 0.2s;
+  }
+
+  .character-modal-close:hover,
+  .character-modal-close:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+    outline: none;
+  }
+
+  .character-modal-body {
+    padding: 24px 32px 30px;
+  }
+
+  .character-modal-field + .character-modal-field {
+    margin-top: 20px;
+  }
+
+  .character-modal-field h3 {
+    margin-bottom: 6px;
+    color: var(--accent);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .character-modal-field p {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   /* ── NAVIGATION ── */
@@ -392,6 +523,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+  }
+
+  .page-audio-row + .page-nav {
+    border-top: none;
   }
 
   .nav-btn {
@@ -425,6 +560,32 @@
     color: var(--text-muted);
     text-align: center;
     flex: 1;
+  }
+
+  .page-audio-row {
+    padding: 18px 36px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-audio-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .page-narration-audio {
+    flex: 1;
+    min-width: 200px;
+    max-width: 100%;
+    height: 36px;
   }
 
   /* ── TIMELINE ── */
@@ -559,11 +720,14 @@
   }
 
   @media (max-width: 600px) {
-    .day-header, .story-body, .characters-row, .page-nav { padding-left: 20px; padding-right: 20px; }
+    .day-header, .story-body, .characters-row, .page-audio-row, .page-nav { padding-left: 20px; padding-right: 20px; }
     .glitch-tag { margin-left: 20px; }
     .illustration-caption { padding-left: 20px; padding-right: 20px; }
     .story-body { font-size: 16px; }
     .nav-btn { font-size: 9px; padding: 9px 14px; }
+    .character-modal-backdrop { padding: 12px; }
+    .character-modal-header, .character-modal-body { padding-left: 22px; padding-right: 22px; }
+    .character-modal-close { right: 18px; }
   }
 </style>
 </head>
@@ -589,6 +753,18 @@
     </div>
   </div>
 </main>
+
+<div class="character-modal-backdrop" id="character-modal-backdrop" aria-hidden="true">
+  <section class="character-modal" role="dialog" aria-modal="true" aria-labelledby="character-modal-title" tabindex="-1">
+    <div class="character-modal-header">
+      <span class="character-modal-kicker">Character File</span>
+      <button class="character-modal-close" id="character-modal-close" type="button" aria-label="Close character details">×</button>
+      <h2 id="character-modal-title"></h2>
+      <div class="character-modal-meta" id="character-modal-meta"></div>
+    </div>
+    <div class="character-modal-body" id="character-modal-body"></div>
+  </section>
+</div>
 
 <div class="timeline-wrap" id="timeline-wrap" style="display:none">
   <div class="timeline-label">The Cascade Timeline</div>
@@ -620,6 +796,58 @@ const CONFIG = {
   storyTitle:  'The Gomez Glitch',
   storyTagline:'Somewhere between yesterday and tomorrow, a family finds the way home — and it\'s shaped like an island.',
 };
+
+const FALLBACK_CHARACTERS = [
+  {
+    name: 'Anthony Gomez',
+    role: 'Father / Accidental Hero',
+    age: 41,
+    appearance: 'Broad-shouldered, warm brown skin, perpetual 3-day stubble, always wearing one slightly-too-loud Hawaiian shirt regardless of climate or occasion. Carries a battered camera bag everywhere.',
+    personality: 'Irrepressibly enthusiastic. Genuinely believes every situation has a silver lining and that the best things happen when you get lost.',
+    quirks: 'Collects miniature license plates from every country or territory they visit, talks to strangers on public transit, and calls his wife Lulu exclusively.',
+    dream: 'He and Lulu have talked for years about eventually settling in Curaçao. It is their someday. It becomes their soon.',
+    role_in_story: 'His spontaneity is literally saving the world. He will never fully understand this and that is perfect.'
+  },
+  {
+    name: 'Luisana Gomez',
+    nickname: 'Lulu',
+    role: 'Mother / The Anchor',
+    age: 39,
+    appearance: 'Medium height, dark curly hair usually in a chaotic bun with at least one pen stuck through it, sharp clever eyes, and always at least three tote bags.',
+    personality: 'The family\'s emotional and logistical center, with former investigative journalist instincts and a gift for finding calm inside chaos.',
+    quirks: 'Keeps a running journal in whatever notebook she can find, locates the best coffee in any city within 20 minutes, and secretly researches Curaçao real estate.',
+    dream: 'A small house with a yellow door near Willemstad, where the sea is always visible.',
+    role_in_story: 'Her journalist instincts and detailed journal provide crucial data Aaliyah needs.'
+  },
+  {
+    name: 'Aaliyah Gomez',
+    role: 'Protagonist / The One Who Figures It Out',
+    age: 13,
+    appearance: 'Lean, sharp-featured, with her dad\'s warm eyes and her mom\'s curls worn in two big puffs. Almost always has one earbud in.',
+    personality: 'Too-smart-for-this-situation, torn between embarrassment at her family\'s chaos and fierce hidden pride in them.',
+    quirks: 'Makes elaborate diagrams, names every notable glitch, and communicates with her dad almost entirely in movie references.',
+    role_in_story: 'She pieces together The Cascade, maps the resonance route, and ultimately has to convince ARIA-7 that human chaos is not a bug.'
+  },
+  {
+    name: 'Elijah Gomez',
+    role: 'Comic Heart / Unexpected Oracle',
+    age: 7,
+    appearance: 'Round-cheeked and compact, with gravity-defying curly hair and spectacular accidental outfit choices.',
+    personality: 'Operates on a frequency slightly adjacent to normal reality. Befriends everything and asks questions that are both childish and profound.',
+    quirks: 'Collects rocks, falls asleep instantly in moving vehicles, always has a snack, and somehow understands Sully\'s bark code.',
+    role_in_story: 'His pure unselfconscious joy is the most powerful resonance generator in the family.'
+  },
+  {
+    name: 'Sully',
+    role: 'The Dog / Glitch Detector',
+    age: '6 months',
+    breed: 'Cavachon',
+    appearance: 'Fluffy, small, brown-and-white patched, with enormous dark eyes, ears too big for his head, and a tail in permanent helicopter mode.',
+    personality: 'Enthusiastic about everything at approximately the same volume. Will bark at a glitch and then try to befriend it.',
+    quirks: 'Gravitates toward glitch zones before they are visible. Elijah is convinced he can understand Sully\'s barks and is correct.',
+    role_in_story: 'Early warning system for The Cascade. Heart of the story. Is beloved. Is never in serious peril.'
+  }
+];
 
 // ─────────────────────────────────────────────
 // SAMPLE DATA — shown before real pages exist
@@ -690,10 +918,30 @@ The city looped. The fork fell. Aaliyah drew a small circle on her map and label
 // ─────────────────────────────────────────────
 let allPages = [];
 let currentIndex = 0;
+let characterDetailsByKey = buildCharacterMap(FALLBACK_CHARACTERS);
+let lastFocusedElement = null;
 
 // ─────────────────────────────────────────────
 // LOAD pages from GitHub or fall back to sample
 // ─────────────────────────────────────────────
+async function loadCharacterDetails() {
+  const remoteRootUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/`;
+  const sources = ['story-bible.json', `${remoteRootUrl}story-bible.json`];
+
+  for (const url of sources) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) continue;
+
+      const bible = await resp.json();
+      if (Array.isArray(bible.characters) && bible.characters.length > 0) {
+        characterDetailsByKey = buildCharacterMap(bible.characters);
+        return;
+      }
+    } catch(e) {}
+  }
+}
+
 async function loadPagesFromSource(indexUrl, pageBaseUrl) {
   const resp = await fetch(indexUrl);
   if (!resp.ok) return [];
@@ -713,6 +961,7 @@ async function loadPages() {
   document.getElementById('story-title').textContent = CONFIG.storyTitle;
   document.getElementById('story-title').dataset.text = CONFIG.storyTitle;
   document.getElementById('story-tagline').textContent = CONFIG.storyTagline;
+  await loadCharacterDetails();
 
   const remoteBaseUrl = `https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/pages/`;
   const sources = [
@@ -741,12 +990,19 @@ function renderPage(idx) {
   const page = allPages[idx];
   const el = document.getElementById('page-content');
 
+  const prevAudio = el.querySelector('#page-narration-audio');
+  if (prevAudio) {
+    prevAudio.pause();
+    prevAudio.removeAttribute('src');
+    prevAudio.load();
+  }
+
   const dateStr = page.date
     ? new Date(page.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
     : '';
 
   const imageHtml = page.imageUrl
-    ? `<div class="illustration-zone"><img src="${page.imageUrl}" alt="${page.imageCaption || ''}"></div>`
+    ? `<div class="illustration-zone"><img src="${escapeAttr(page.imageUrl)}" alt="${escapeAttr(page.imageCaption || '')}"></div>`
     : `<div class="illustration-zone">
         <div class="illustration-placeholder">
           <div class="icon">🌀</div>
@@ -755,26 +1011,35 @@ function renderPage(idx) {
        </div>`;
 
   const captionHtml = page.imageCaption
-    ? `<p class="illustration-caption">${page.imageCaption}</p>` : '';
+    ? `<p class="illustration-caption">${escapeHtml(page.imageCaption)}</p>` : '';
 
   const glitchHtml = page.glitchName
-    ? `<div class="glitch-tag">${page.glitchName}</div>` : '';
+    ? `<div class="glitch-tag">${escapeHtml(page.glitchName)}</div>` : '';
 
   const chipsHtml = (page.characters || []).map(c =>
-    `<span class="chip${c.includes('🐾') ? ' sully' : ''}">${c}</span>`
+    `<button type="button" class="chip${isSully(c) ? ' sully' : ''}" data-character="${escapeAttr(c)}" aria-label="View details for ${escapeAttr(c)}">${escapeHtml(c)}</button>`
   ).join('');
 
   const bodyHtml = (page.text || '').split(/\n\n+/).filter(Boolean)
-    .map(p => `<p>${p.trim()}</p>`).join('');
+    .map(p => `<p>${escapeHtml(p.trim())}</p>`).join('');
+
+  const audioHtml = page.audioUrl
+    ? `<div class="page-audio-row">
+        <span class="page-audio-label">Listen</span>
+        <audio id="page-narration-audio" class="page-narration-audio" controls preload="metadata" src="${escapeAttr(page.audioUrl)}">
+          <a href="${escapeAttr(page.audioUrl)}">Download narration</a>
+        </audio>
+      </div>`
+    : '';
 
   el.innerHTML = `<div class="page-reveal">
     <div class="day-header">
       <div>
         <div class="day-badge">
-          <span class="day-number">DAY ${page.day}</span>
-          <span class="day-date">${dateStr}</span>
+          <span class="day-number">DAY ${escapeHtml(page.day)}</span>
+          <span class="day-date">${escapeHtml(dateStr)}</span>
         </div>
-        <div class="chapter-title-wrap"><h2>${page.chapterTitle || 'Untitled'}</h2></div>
+        <div class="chapter-title-wrap"><h2>${escapeHtml(page.chapterTitle || 'Untitled')}</h2></div>
       </div>
     </div>
     ${imageHtml}
@@ -785,6 +1050,7 @@ function renderPage(idx) {
       <div class="characters-label">In this page</div>
       <div class="character-chips">${chipsHtml}</div>
     </div>
+    ${audioHtml}
     <div class="page-nav">
       <button class="nav-btn" onclick="navigate(-1)" ${idx===0?'disabled':''}>← Prev</button>
       <span class="page-indicator">Page ${idx+1} of ${allPages.length}</span>
@@ -794,6 +1060,105 @@ function renderPage(idx) {
 
   updateTimeline();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value);
+}
+
+function normalizeCharacterName(name) {
+  const normalized = String(name || '')
+    .toLowerCase()
+    .replace(/🐾/g, '')
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (normalized.includes('anthony')) return 'anthony gomez';
+  if (normalized.includes('luisana') || normalized.includes('lulu')) return 'luisana gomez';
+  if (normalized.includes('aaliyah')) return 'aaliyah gomez';
+  if (normalized.includes('elijah')) return 'elijah gomez';
+  if (normalized.includes('sully')) return 'sully';
+  return normalized;
+}
+
+function buildCharacterMap(characters) {
+  return characters.reduce((map, character) => {
+    map[normalizeCharacterName(character.name)] = character;
+    return map;
+  }, {});
+}
+
+function isSully(name) {
+  return normalizeCharacterName(name) === 'sully';
+}
+
+function renderCharacterField(label, value) {
+  if (!value) return '';
+  return `<div class="character-modal-field">
+    <h3>${escapeHtml(label)}</h3>
+    <p>${escapeHtml(value)}</p>
+  </div>`;
+}
+
+function openCharacterModal(rawName) {
+  const character = characterDetailsByKey[normalizeCharacterName(rawName)];
+  const title = document.getElementById('character-modal-title');
+  const meta = document.getElementById('character-modal-meta');
+  const body = document.getElementById('character-modal-body');
+  const backdrop = document.getElementById('character-modal-backdrop');
+
+  lastFocusedElement = document.activeElement;
+
+  if (!character) {
+    title.textContent = rawName;
+    meta.innerHTML = '';
+    body.innerHTML = renderCharacterField('Status', 'No character file has been added for this name yet.');
+  } else {
+    title.textContent = character.name;
+    meta.innerHTML = [
+      character.role,
+      character.age ? `Age ${character.age}` : '',
+      character.breed
+    ].filter(Boolean).map(item => `<span class="character-modal-pill">${escapeHtml(item)}</span>`).join('');
+
+    body.innerHTML = [
+      renderCharacterField('Also Known As', character.nickname),
+      renderCharacterField('Appearance', character.appearance),
+      renderCharacterField('Personality', character.personality),
+      renderCharacterField('Quirks', character.quirks),
+      renderCharacterField('Dream', character.dream),
+      renderCharacterField('Abuela Ida\'s Butterfly', character.abuelas_butterfly),
+      renderCharacterField('Story Role', character.role_in_story)
+    ].join('');
+  }
+
+  backdrop.classList.add('active');
+  backdrop.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  document.getElementById('character-modal-close').focus();
+}
+
+function closeCharacterModal() {
+  const backdrop = document.getElementById('character-modal-backdrop');
+  backdrop.classList.remove('active');
+  backdrop.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+
+  if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+    lastFocusedElement.focus();
+  }
 }
 
 function navigate(dir) {
@@ -829,8 +1194,25 @@ function updateTimeline() {
 
 // Keyboard
 document.addEventListener('keydown', e => {
+  const modalOpen = document.getElementById('character-modal-backdrop').classList.contains('active');
+  if (modalOpen) {
+    if (e.key === 'Escape') closeCharacterModal();
+    return;
+  }
+
   if (e.key === 'ArrowLeft')  navigate(-1);
   if (e.key === 'ArrowRight') navigate(1);
+});
+
+document.getElementById('page-content').addEventListener('click', e => {
+  const chip = e.target.closest('[data-character]');
+  if (!chip) return;
+  openCharacterModal(chip.dataset.character);
+});
+
+document.getElementById('character-modal-close').addEventListener('click', closeCharacterModal);
+document.getElementById('character-modal-backdrop').addEventListener('click', e => {
+  if (e.target.id === 'character-modal-backdrop') closeCharacterModal();
 });
 
 loadPages();
