@@ -17,7 +17,11 @@ const ROOT = path.resolve(__dirname, "..");
 
 console.log("🧪 TEST MODE — running generator locally\n");
 console.log("API Key present:", !!process.env.ANTHROPIC_API_KEY);
-console.log("HF Token present:", !!process.env.HF_TOKEN);
+console.log("Google credentials present:", !!(
+  process.env.GOOGLE_SERVICE_ACCOUNT_JSON ||
+  process.env.GOOGLE_APPLICATION_CREDENTIALS
+));
+console.log("GOOGLE_CLOUD_PROJECT:", process.env.GOOGLE_CLOUD_PROJECT || "(from key file)");
 console.log("Root directory:", ROOT);
 console.log("");
 

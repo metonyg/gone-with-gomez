@@ -1,14 +1,15 @@
 // ═══════════════════════════════════════════════════════════════
 //  THE GOMEZ GLITCH — Daily Story Generator
 //  Reads the story bible + page history, generates a new page
-//  via Claude API, requests an illustration via Hugging Face,
+//  via Claude API, requests an illustration via Vertex AI Imagen,
 //  optionally synthesizes narration via Google Cloud Text-to-Speech,
 //  then writes the result to /pages/day-NNN.json
 // ═══════════════════════════════════════════════════════════════
 
 import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI, PersonGeneration, SafetyFilterLevel } from "@google/genai";
 import { TextToSpeechClient } from "@google-cloud/text-to-speech";
-import { InferenceClient } from "@huggingface/inference";
+import ffmpegPath from "ffmpeg-static";
 import { execFileSync } from "child_process";
 import fs from "fs";
 import os from "os";
@@ -27,6 +28,42 @@ const INDEX_PATH = path.join(PAGES_DIR, "index.json");
 
 const TTS_MAX_CHUNK_BYTES = 4500;
 const DEFAULT_TTS_VOICE = "en-US-Neural2-F";
+const IMAGEN_MODEL = process.env.GOOGLE_IMAGEN_MODEL || "imagen-3.0-generate-002";
+const IMAGEN_LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
+
+const SUBMIT_PAGE_TOOL = {
+  name: "submit_daily_page",
+  description: "Submit today's story page with all fields populated.",
+  input_schema: {
+    type: "object",
+    properties: {
+      day: { type: "integer", description: "Day number (1-365)" },
+      date: { type: "string", description: "ISO date YYYY-MM-DD" },
+      chapterTitle: { type: "string" },
+      glitchName: {
+        type: "string",
+        description: "Aaliyah's glitch name, or empty string if no glitch today",
+      },
+      imageCaption: { type: "string" },
+      characters: { type: "array", items: { type: "string" } },
+      text: {
+        type: "string",
+        description: "Full story prose; separate paragraphs with \\n\\n",
+      },
+      summaryUpdate: { type: "string" },
+    },
+    required: [
+      "day",
+      "date",
+      "chapterTitle",
+      "glitchName",
+      "imageCaption",
+      "characters",
+      "text",
+      "summaryUpdate",
+    ],
+  },
+};
 
 // ─── CLIENTS ───────────────────────────────────────────────────
 const anthropic = new Anthropic({
@@ -173,61 +210,157 @@ Rules:
 - Sully is never in serious peril
 - Do NOT summarize or recap — write the scene
 
-Respond ONLY with a JSON object in this exact structure (no markdown, no code fences, raw JSON):
-{
-  "day": ${dayNumber},
-  "date": "${todayISO()}",
-  "chapterTitle": "A short evocative title for today's page",
-  "glitchName": "Aaliyah's name for today's glitch event, if one occurs (null if no glitch today)",
-  "imageCaption": "A vivid one-sentence description of the scene to be illustrated — specific, visual, cinematic",
-  "characters": ["Names of characters who appear in this page"],
-  "text": "The full story prose here, paragraphs separated by \\n\\n",
-  "summaryUpdate": "2-3 sentences updating the rolling story summary with what happened today. Write in the same tense and style as the existing summary."
-}`;
+Submit the completed page using the submit_daily_page tool (required). Field values:
+- day: ${dayNumber}
+- date: "${todayISO()}"
+- chapterTitle, glitchName (empty string if none), imageCaption, characters, text, summaryUpdate
+
+Do not output raw JSON or markdown in your reply — only use the tool.`;
 }
 
-/** Request illustration from Hugging Face Inference API */
+/** Normalize tool/JSON page payload */
+function normalizePagePayload(page) {
+  const normalized = { ...page };
+  if (
+    normalized.glitchName === "" ||
+    normalized.glitchName === "null" ||
+    normalized.glitchName === "none"
+  ) {
+    normalized.glitchName = null;
+  }
+  return normalized;
+}
+
+/** Parse Claude response from tool_use (preferred) or legacy text JSON */
+function parseClaudePageResponse(message) {
+  const toolUse = message.content.find(
+    (block) => block.type === "tool_use" && block.name === "submit_daily_page"
+  );
+  if (toolUse?.input && typeof toolUse.input === "object") {
+    return normalizePagePayload(toolUse.input);
+  }
+
+  const textBlock = message.content.find((block) => block.type === "text");
+  const raw = textBlock?.text?.trim() ?? "";
+  if (!raw) {
+    throw new Error("Claude returned no submit_daily_page tool output or text");
+  }
+
+  const cleaned = raw
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/```\s*$/i, "")
+    .trim();
+
+  return normalizePagePayload(JSON.parse(cleaned));
+}
+
+function createVertexClientOptions() {
+  const rawJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  const clientOptions = {
+    apiEndpoint: `${IMAGEN_LOCATION}-aiplatform.googleapis.com`,
+  };
+
+  if (rawJson?.trim()) {
+    try {
+      clientOptions.credentials = JSON.parse(rawJson);
+      return clientOptions;
+    } catch {
+      console.error("⚠️  GOOGLE_SERVICE_ACCOUNT_JSON is set but not valid JSON — skipping image generation");
+      return null;
+    }
+  }
+
+  if (keyPath && fs.existsSync(keyPath)) {
+    clientOptions.keyFilename = keyPath;
+    return clientOptions;
+  }
+
+  return null;
+}
+
+function resolveGoogleProjectId(clientOptions) {
+  if (process.env.GOOGLE_CLOUD_PROJECT) return process.env.GOOGLE_CLOUD_PROJECT;
+  if (clientOptions.credentials?.project_id) return clientOptions.credentials.project_id;
+  if (clientOptions.keyFilename) {
+    try {
+      return loadJSON(clientOptions.keyFilename).project_id;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+function createGenAIClient(projectId, clientOptions) {
+  const googleAuthOptions = clientOptions.credentials
+    ? { credentials: clientOptions.credentials }
+    : { keyFilename: clientOptions.keyFilename };
+
+  return new GoogleGenAI({
+    vertexai: true,
+    project: projectId,
+    location: IMAGEN_LOCATION,
+    googleAuthOptions,
+  });
+}
+
+/** Request illustration from Vertex AI Imagen via @google/genai */
 async function generateImage(bible, page) {
-  const hfToken = process.env.HF_TOKEN;
-  if (!hfToken) {
-    console.log("⚠️  No HF_TOKEN — skipping image generation");
+  const clientOptions = createVertexClientOptions();
+  if (!clientOptions) {
+    console.log("⚠️  No Google credentials — skipping image generation");
     return "";
   }
 
-  // Build image prompt from caption + style
+  const projectId = resolveGoogleProjectId(clientOptions);
+  if (!projectId) {
+    console.log("⚠️  No GOOGLE_CLOUD_PROJECT — skipping image generation");
+    return "";
+  }
+
   const styleGuide = bible.imageStyle;
   const characterPrompt = buildImageCharacterPrompt(bible, page.characters);
-  const prompt = `${page.imageCaption}. Character reference descriptions: ${characterPrompt}. ${styleGuide}. Keep the characters visually consistent with these descriptions across every illustration.`;
-
+  const prompt = `${page.imageCaption}. Character reference: ${characterPrompt}. ${styleGuide}. Keep characters visually consistent.`;
   const negativePrompt =
     "realistic, photograph, dark, gloomy, horror, violence, text, watermark, blurry";
 
   try {
-    const hf = new InferenceClient(hfToken);
-    const image = await hf.textToImage({
-      provider: "auto",
-      model: "black-forest-labs/FLUX.1-schnell",
-      inputs: prompt,
-      parameters: {
-        negative_prompt: negativePrompt,
-        num_inference_steps: 4, // schnell is fast — 4 steps is enough
-        width: 896,
-        height: 512,
+    const ai = createGenAIClient(projectId, clientOptions);
+    const response = await ai.models.generateImages({
+      model: IMAGEN_MODEL,
+      prompt,
+      config: {
+        numberOfImages: 1,
+        aspectRatio: "16:9",
+        negativePrompt,
+        safetyFilterLevel: SafetyFilterLevel.BLOCK_MEDIUM_AND_ABOVE,
+        personGeneration: PersonGeneration.ALLOW_ALL,
+        includeRaiReason: true,
+        outputMimeType: "image/png",
       },
     });
 
-    // Save image using the content type returned by the selected provider.
+    const generated = response.generatedImages?.[0];
+    const imageBytes = generated?.image?.imageBytes;
+    if (!imageBytes) {
+      const reason = generated?.raiFilteredReason ?? "no image bytes returned";
+      throw new Error(`Imagen produced no image: ${reason}`);
+    }
+
+    const buffer = Buffer.isBuffer(imageBytes)
+      ? imageBytes
+      : Buffer.from(imageBytes, "base64");
+
     const imagesDir = path.join(PAGES_DIR, "images");
     if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true });
 
-    const imageBuffer = await image.arrayBuffer();
-    const imageExt = image.type === "image/jpeg" ? "jpg" : "png";
-    const imagePath = path.join(imagesDir, `day-${pad(page.day)}.${imageExt}`);
-    fs.writeFileSync(imagePath, Buffer.from(imageBuffer));
+    const imagePath = path.join(imagesDir, `day-${pad(page.day)}.png`);
+    fs.writeFileSync(imagePath, buffer);
 
     console.log(`🎨 Image saved: ${imagePath}`);
-    // Return relative URL for use in JSON (GitHub Pages serves from root)
-    return `pages/images/day-${pad(page.day)}.${imageExt}`;
+    return `pages/images/day-${pad(page.day)}.png`;
   } catch (err) {
     console.error("Image generation failed:", err.message);
     return "";
@@ -335,6 +468,13 @@ function createTtsClient() {
   return null;
 }
 
+function resolveFfmpegExecutable() {
+  if (ffmpegPath && typeof ffmpegPath === "string" && fs.existsSync(ffmpegPath)) {
+    return ffmpegPath;
+  }
+  return "ffmpeg";
+}
+
 function mergeMp3WithFfmpeg(tmpDir, partPaths, outPath) {
   const listFile = path.join(tmpDir, "concat.txt");
   const body = partPaths
@@ -345,7 +485,7 @@ function mergeMp3WithFfmpeg(tmpDir, partPaths, outPath) {
     .join("\n");
   fs.writeFileSync(listFile, body, "utf8");
   execFileSync(
-    "ffmpeg",
+    resolveFfmpegExecutable(),
     ["-y", "-f", "concat", "-safe", "0", "-i", "concat.txt", "-c", "copy", path.resolve(outPath)],
     { cwd: tmpDir, stdio: "pipe" }
   );
@@ -401,10 +541,7 @@ async function synthesizePageAudio(page, dayNumber) {
       try {
         mergeMp3WithFfmpeg(tmpDir, partPaths, outFile);
       } catch (err) {
-        console.error(
-          "TTS: ffmpeg concat failed (install ffmpeg for long pages):",
-          err.message
-        );
+        console.error("TTS: ffmpeg concat failed:", err.message);
         return "";
       }
     }
@@ -477,30 +614,25 @@ async function main() {
   const message = await anthropic.messages.create({
     model: CLAUDE_MODEL,
     max_tokens: MAX_TOKENS,
+    tools: [SUBMIT_PAGE_TOOL],
+    tool_choice: { type: "tool", name: "submit_daily_page" },
     messages: [{ role: "user", content: prompt }],
   });
 
   if (message.stop_reason === "max_tokens") {
     throw new Error(
-      `Claude response reached MAX_TOKENS (${MAX_TOKENS}) before finishing JSON`
+      `Claude response reached MAX_TOKENS (${MAX_TOKENS}) before finishing the page`
     );
   }
 
-  const rawResponse = message.content[0].text.trim();
-
-  // 5. Parse response
+  // 5. Parse response (structured tool output)
   let page;
   try {
-    // Strip any accidental markdown fences
-    const cleaned = rawResponse
-      .replace(/^```json\s*/i, "")
-      .replace(/^```\s*/i, "")
-      .replace(/```\s*$/i, "")
-      .trim();
-    page = JSON.parse(cleaned);
+    page = parseClaudePageResponse(message);
   } catch (err) {
-    console.error("Failed to parse Claude response:", rawResponse);
-    throw new Error(`JSON parse error: ${err.message}`);
+    const textFallback = message.content.find((b) => b.type === "text")?.text ?? "";
+    console.error("Failed to parse Claude response:", textFallback.slice(0, 500));
+    throw new Error(`Page parse error: ${err.message}`);
   }
 
   console.log(`📝 Page generated: "${page.chapterTitle}"`);

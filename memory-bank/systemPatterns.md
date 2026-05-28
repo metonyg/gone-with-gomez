@@ -6,7 +6,7 @@ Generation flow:
 1. Load `story-bible.json` and `pages/index.json`.
 2. Build a Claude prompt with canon, rolling summary, and recent pages.
 3. Parse Claude's JSON response.
-4. Generate an image through Hugging Face.
+4. Generate an image through Vertex AI Imagen.
 5. Save `pages/day-NNN.json`, update `pages/index.json`, and refresh the rolling summary.
 
 The frontend is a single static `index.html` file that reads generated JSON content. Optional per-page MP3 narration is generated alongside each page when Google TTS credentials are configured; the reader shows an `<audio>` control when `audioUrl` is present on a page.

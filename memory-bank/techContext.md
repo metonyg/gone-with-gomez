@@ -4,7 +4,7 @@ Runtime: Node.js 18+ with ES modules.
 
 Main dependencies:
 - `@anthropic-ai/sdk` for story generation.
-- `@huggingface/inference` for image generation.
+- `@google/genai` for image generation (Vertex AI Imagen 3).
 - `@google-cloud/text-to-speech` for optional pre-generated page narration (MP3).
 - `dotenv` for local environment loading.
 
@@ -12,8 +12,9 @@ Automation runs through GitHub Actions in `.github/workflows/daily-generate.yml`
 
 Required secrets:
 - `ANTHROPIC_API_KEY`
-- `HF_TOKEN`
+- `GOOGLE_SERVICE_ACCOUNT_JSON` — GCP service account JSON (Vertex AI User + Cloud Text-to-Speech User roles)
+- `GOOGLE_CLOUD_PROJECT` — GCP project ID for Imagen
 
-Optional (narration): repository secret **`GOOGLE_SERVICE_ACCOUNT_JSON`** — full GCP service account JSON with Cloud Text-to-Speech API enabled and role **Cloud Text-to-Speech User**. Local: `GOOGLE_APPLICATION_CREDENTIALS` pointing at the key file, or `GOOGLE_SERVICE_ACCOUNT_JSON` in `.env`.
+Optional (narration/images): `GOOGLE_CLOUD_LOCATION`, `GOOGLE_IMAGEN_MODEL`, `GOOGLE_TTS_VOICE`. Local: `GOOGLE_APPLICATION_CREDENTIALS` pointing at the key file, or `GOOGLE_SERVICE_ACCOUNT_JSON` in `.env`.
 
-Current image model path uses Hugging Face text-to-image with `black-forest-labs/FLUX.1-schnell`.
+Current image model path uses Vertex AI Imagen with `imagen-3.0-generate-002` via `@google/genai` `models.generateImages()`.
