@@ -73,6 +73,10 @@
     {
       "day": 18,
       "file": "day-018.json"
+    },
+    {
+      "day": 19,
+      "file": "day-019.json"
     }
   ]
 }
