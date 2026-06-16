@@ -525,8 +525,23 @@
     gap: 12px;
   }
 
-  .page-audio-row + .page-nav {
+  .page-nav--top {
     border-top: none;
+    padding: 0 4px 14px;
+  }
+
+  .reader-nav {
+    width: 100%;
+    max-width: 860px;
+    margin-bottom: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 12px 0 8px;
+    background: rgba(11, 14, 26, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: slideDown 0.7s 0.2s ease both;
   }
 
   .nav-btn {
@@ -591,10 +606,7 @@
   /* ── TIMELINE ── */
   .timeline-wrap {
     width: 100%;
-    max-width: 860px;
-    margin-top: 24px;
     padding: 0 4px;
-    animation: slideUp 0.9s 0.3s ease both;
   }
 
   .timeline-label {
@@ -720,6 +732,8 @@
   }
 
   @media (max-width: 600px) {
+    .reader-nav { padding: 10px 0 6px; }
+    .page-nav--top { padding-left: 0; padding-right: 0; }
     .day-header, .story-body, .characters-row, .page-audio-row, .page-nav { padding-left: 20px; padding-right: 20px; }
     .glitch-tag { margin-left: 20px; }
     .illustration-caption { padding-left: 20px; padding-right: 20px; }
@@ -744,6 +758,26 @@
   </div>
 </header>
 
+<nav class="reader-nav" id="reader-nav" aria-label="Story navigation" style="display:none">
+  <div class="page-nav page-nav--top" id="page-nav-top"></div>
+  <div class="timeline-wrap" id="timeline-wrap">
+    <div class="timeline-label">The Cascade Timeline</div>
+    <div class="timeline-track" id="timeline-track">
+      <div class="act-markers">
+        <div class="act-pip" style="left:20.5%"></div>
+        <div class="act-pip" style="left:49.3%"></div>
+        <div class="act-pip" style="left:76.7%"></div>
+      </div>
+      <div class="timeline-fill" id="timeline-fill"></div>
+      <div class="timeline-thumb" id="timeline-thumb"></div>
+    </div>
+    <div class="timeline-ends">
+      <span>Day 1 · Lisbon</span>
+      <span id="timeline-end">Day 365</span>
+    </div>
+  </div>
+</nav>
+
 <main class="story-card" id="story-card">
   <div class="card-accent-bar"></div>
   <div id="page-content">
@@ -764,23 +798,6 @@
     </div>
     <div class="character-modal-body" id="character-modal-body"></div>
   </section>
-</div>
-
-<div class="timeline-wrap" id="timeline-wrap" style="display:none">
-  <div class="timeline-label">The Cascade Timeline</div>
-  <div class="timeline-track" id="timeline-track">
-    <div class="act-markers">
-      <div class="act-pip" style="left:20.5%"></div>
-      <div class="act-pip" style="left:49.3%"></div>
-      <div class="act-pip" style="left:76.7%"></div>
-    </div>
-    <div class="timeline-fill" id="timeline-fill"></div>
-    <div class="timeline-thumb" id="timeline-thumb"></div>
-  </div>
-  <div class="timeline-ends">
-    <span>Day 1 · Lisbon</span>
-    <span id="timeline-end">Day 365</span>
-  </div>
 </div>
 
 <footer class="footer">Updated daily. Glitches may occur. The Gomez family is probably fine.</footer>
@@ -986,6 +1003,12 @@ async function loadPages() {
 // ─────────────────────────────────────────────
 // RENDER
 // ─────────────────────────────────────────────
+function buildPageNavHtml(idx) {
+  return `<button class="nav-btn" onclick="navigate(-1)" ${idx === 0 ? 'disabled' : ''}>← Prev</button>
+      <span class="page-indicator">Page ${idx + 1} of ${allPages.length}</span>
+      <button class="nav-btn" onclick="navigate(1)" ${idx === allPages.length - 1 ? 'disabled' : ''}>Next →</button>`;
+}
+
 function renderPage(idx) {
   const page = allPages[idx];
   const el = document.getElementById('page-content');
@@ -1044,20 +1067,17 @@ function renderPage(idx) {
     </div>
     ${imageHtml}
     ${captionHtml}
+    ${audioHtml}
     ${glitchHtml}
     <div class="story-body">${bodyHtml}</div>
     <div class="characters-row">
       <div class="characters-label">In this page</div>
       <div class="character-chips">${chipsHtml}</div>
     </div>
-    ${audioHtml}
-    <div class="page-nav">
-      <button class="nav-btn" onclick="navigate(-1)" ${idx===0?'disabled':''}>← Prev</button>
-      <span class="page-indicator">Page ${idx+1} of ${allPages.length}</span>
-      <button class="nav-btn" onclick="navigate(1)" ${idx===allPages.length-1?'disabled':''}>Next →</button>
-    </div>
+    <div class="page-nav" id="page-nav-bottom">${buildPageNavHtml(idx)}</div>
   </div>`;
 
+  document.getElementById('page-nav-top').innerHTML = buildPageNavHtml(idx);
   updateTimeline();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1173,7 +1193,7 @@ function navigate(dir) {
 // ─────────────────────────────────────────────
 function renderTimeline() {
   if (allPages.length <= 1) return;
-  document.getElementById('timeline-wrap').style.display = 'block';
+  document.getElementById('reader-nav').style.display = 'block';
   document.getElementById('timeline-end').textContent = `Day ${allPages[allPages.length-1].day}`;
   updateTimeline();
 

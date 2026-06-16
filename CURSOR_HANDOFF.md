@@ -200,8 +200,9 @@ Single HTML file, no framework, no build step. Loads local `pages/index.json` fi
 - **Drop cap** on first paragraph of each page
 - **Glitch animation** on the title (CSS keyframes, fires every ~8 seconds)
 - **Star field** background via CSS radial gradients
-- **Timeline bar** at the bottom — clickable to jump between pages, shows act markers
+- **Sticky top nav** — Prev/Next at top and bottom of each page; **timeline scrubber** above the story card (clickable to jump between days, act markers)
 - **Glitch tag badge** showing Aaliyah's glitch name for the day
+- **Narration** `<audio>` control after the illustration when `audioUrl` is set
 - **Character chips** row at the bottom of each page
 - **Keyboard nav** — left/right arrow keys
 

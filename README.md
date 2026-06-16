@@ -41,8 +41,8 @@ Skipped steps are non-fatal: missing Google credentials still produce text; imag
 A single static page (no build step) that:
 
 - Loads `pages/index.json`, then fetches each `pages/day-NNN.json`
-- Shows illustration, glitch tag, story body, character chips (with modal details from `story-bible.json`), and an `<audio>` player when `audioUrl` is set
-- Supports prev/next navigation, keyboard arrows, and a timeline scrubber across published days
+- Shows illustration, optional narration (`audioUrl`) after the image, glitch tag, story body, and character chips (with modal details from `story-bible.json`)
+- Sticky top nav with Prev/Next, keyboard arrows, and a timeline scrubber across published days (Prev/Next also at the bottom of each page)
 
 Published assets are served from the repo root on GitHub Pages (e.g. `pages/images/day-001.png`).
 
