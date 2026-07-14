@@ -257,6 +257,10 @@
     {
       "day": 64,
       "file": "day-064.json"
+    },
+    {
+      "day": 65,
+      "file": "day-065.json"
     }
   ]
 }
