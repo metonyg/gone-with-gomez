@@ -7,12 +7,8 @@
 name: Daily Story Generation
 
 on:
-  # Run every day at 8:00 AM Eastern Time (UTC-4 in summer, UTC-5 in winter)
-  # Set to 12:00 UTC to reliably hit ~8am ET year-round
-  schedule:
-    - cron: "0 12 * * *"
-
-  # Allow manual trigger from the GitHub Actions tab (useful for testing)
+  # Daily cron disabled — experiment concluded August 2026 (99 of 365 days).
+  # Manual runs still available for testing via workflow_dispatch.
   workflow_dispatch:
     inputs:
       dry_run:

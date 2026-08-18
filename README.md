@@ -4,6 +4,8 @@ An auto-generating serialized adventure book: one new chapter per day for 365 da
 
 **Tagline:** *Somewhere between yesterday and tomorrow, a family finds the way home — and it's shaped like an island.*
 
+> **Archive status (August 2026):** This experiment concluded after **99 published days**. Daily generation is disabled; the [live reader](https://metonyg.github.io/gone-with-gomez/) remains frozen as a static archive on GitHub Pages.
+
 ---
 
 ## How It Works
